@@ -136,7 +136,6 @@
             <nav class="px-6 pb-4 flex flex-wrap gap-2 border-t border-indigo-500/40 pt-3">
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition text-sm">Catalog</button>
                 <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">My Borrowed Books</button>
-                <button onclick="switchTab('directory')" id="nav-directory" class="px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm"><i class="fa-solid fa-address-book mr-1"></i>Directory & Calling</button>
                 <button onclick="switchTab('approvals')" id="nav-approvals" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Member Approvals</button>
                 <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Approved Members</button>
                 <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Admin Audit & History</button>
@@ -228,50 +227,7 @@
             </div>
         </section>
 
-        <!-- TAB 3: DIRECTORY & CALLING -->
-        <section id="tab-directory" class="space-y-6 hidden">
-            <!-- Library Admin Contacts Card -->
-            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <div class="flex items-center space-x-3 border-b pb-3">
-                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900">Library Administrators</h2>
-                        <p class="text-xs text-slate-500">Call an administrator directly for instant live assistance.</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="admin-directory-cards"></div>
-            </div>
-
-            <!-- Approved Members Directory -->
-            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                <div class="flex items-center space-x-3 border-b pb-3">
-                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900">Library Members Directory</h2>
-                        <p class="text-xs text-slate-500">Connect with registered library members instantly.</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-3">Email / ID</th>
-                                <th class="p-3">Name</th>
-                                <th class="p-3">Formation / Details</th>
-                                <th class="p-3 text-right">Direct Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="directory-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: MEMBER APPROVALS (ADMIN ONLY) -->
+        <!-- TAB 3: MEMBER APPROVALS (ADMIN ONLY) -->
         <section id="tab-approvals" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-user-check mr-2 text-indigo-600"></i>Pending Member Registrations</h2>
@@ -293,7 +249,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
+        <!-- TAB 4: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
         <section id="tab-members" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800">Approved Members Directory</h2>
@@ -317,7 +273,7 @@
             </div>
         </section>
 
-        <!-- TAB 6: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
+        <!-- TAB 5: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
         <section id="tab-audit" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Checkout Form -->
@@ -424,54 +380,6 @@
         </div>
     </div>
 
-    <!-- MODAL: LIVE RINGING / INCOMING CALL -->
-    <div id="incoming-call-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 border border-slate-700 text-slate-100 rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-5">
-            <div class="w-20 h-20 bg-emerald-600/20 text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto border border-emerald-500/40 animate-bounce">
-                <i class="fa-solid fa-phone-volume"></i>
-            </div>
-            <div>
-                <h3 class="text-xs uppercase tracking-widest text-emerald-400 font-bold">Incoming Call</h3>
-                <h2 id="caller-name" class="text-xl font-bold text-white mt-1">Library Member</h2>
-                <p id="caller-email" class="text-xs font-mono text-slate-400 mt-0.5"></p>
-            </div>
-            <div class="flex space-x-3 pt-2">
-                <button onclick="answerIncomingCall()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-medium transition shadow-lg flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-phone"></i>
-                    <span>Answer</span>
-                </button>
-                <button onclick="rejectIncomingCall()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-medium transition shadow-lg flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-phone-slash"></i>
-                    <span>Reject</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: ACTIVE ONGOING CALL WITH AUDIO -->
-    <div id="active-call-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 border border-slate-700 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl text-center space-y-4">
-            <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center text-2xl mx-auto border border-indigo-500/40 animate-pulse">
-                <i class="fa-solid fa-headset"></i>
-            </div>
-            <div>
-                <h3 class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Connected Voice Call</h3>
-                <h2 id="active-call-name" class="text-lg font-bold text-white mt-1">In Session</h2>
-                <p id="call-duration" class="text-xs font-mono text-emerald-400 mt-1">00:00</p>
-            </div>
-
-            <!-- Embedded Live Audio Stream Container -->
-            <div id="audio-iframe-container" class="w-full h-24 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-700">
-                <p class="text-xs text-slate-400 animate-pulse">Connecting audio stream...</p>
-            </div>
-
-            <button onclick="endActiveCall()" class="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-medium transition shadow-lg flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-phone-slash"></i>
-                <span>End Call</span>
-            </button>
-        </div>
-    </div>
-
     <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -498,11 +406,9 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {}, calls: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
         let currentUser = null;
         let isAdmin = false;
-        let activeCallId = null;
-        let callTimerInterval = null;
 
         // Live Clock & Date Interval
         setInterval(() => {
@@ -537,102 +443,11 @@
 
         window.logoutUser = async function () {
             try {
-                if (activeCallId) await endActiveCall();
                 await signOut(auth);
             } catch (error) {
                 console.error("Logout Error:", error);
             }
         };
-
-        // Real-Time Calling Functions (Normalized to lowercase emails)
-        window.startCallTo = async function(targetEmail, targetName) {
-            if (!currentUser) return;
-            const callId = "call_" + Date.now();
-            activeCallId = callId;
-            const cleanTarget = targetEmail.trim().toLowerCase();
-            const roomName = `LWCS_Library_${btoa(currentUser.email.toLowerCase() + cleanTarget).replace(/=/g, '')}`;
-
-            try {
-                await setDoc(doc(db, "calls", callId), {
-                    id: callId,
-                    callerEmail: currentUser.email.toLowerCase(),
-                    callerName: currentUser.displayName || currentUser.email,
-                    targetEmail: cleanTarget,
-                    targetName: targetName,
-                    roomName: roomName,
-                    status: "ringing",
-                    timestamp: Date.now()
-                });
-
-                document.getElementById('active-call-name').innerText = `Calling ${targetName}...`;
-                openModal('active-call-modal');
-                loadAudioRoom(roomName);
-                startCallTimer();
-            } catch (error) {
-                alert("Failed to initiate call: " + error.message);
-            }
-        };
-
-        window.answerIncomingCall = async function() {
-            if (!activeCallId) return;
-            try {
-                await updateDoc(doc(db, "calls", activeCallId), { status: "answered" });
-                closeModal('incoming-call-modal');
-                openModal('active-call-modal');
-                startCallTimer();
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        window.rejectIncomingCall = async function() {
-            if (!activeCallId) return;
-            try {
-                await updateDoc(doc(db, "calls", activeCallId), { status: "rejected" });
-                closeModal('incoming-call-modal');
-                activeCallId = null;
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        window.endActiveCall = async function() {
-            if (activeCallId) {
-                try {
-                    await updateDoc(doc(db, "calls", activeCallId), { status: "ended" });
-                    await deleteDoc(doc(db, "calls", activeCallId));
-                } catch (e) { console.error(e); }
-            }
-            endActiveCallLocally();
-        };
-
-        function endActiveCallLocally() {
-            activeCallId = null;
-            clearInterval(callTimerInterval);
-            closeModal('active-call-modal');
-            closeModal('incoming-call-modal');
-            const iframeContainer = document.getElementById('audio-iframe-container');
-            if (iframeContainer) iframeContainer.innerHTML = '';
-        }
-
-        function loadAudioRoom(roomName) {
-            const container = document.getElementById('audio-iframe-container');
-            if (container) {
-                container.innerHTML = `<iframe src="https://meet.jit.si/${roomName}#config.startWithAudioMuted=false&config.startWithVideoMuted=true" allow="microphone; camera" style="width:100%; height:100%; border:none;"></iframe>`;
-            }
-        }
-
-        function startCallTimer() {
-            let seconds = 0;
-            const durationEl = document.getElementById('call-duration');
-            clearInterval(callTimerInterval);
-            callTimerInterval = setInterval(() => {
-                seconds++;
-                const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
-                const secs = String(seconds % 60).padStart(2, '0');
-                if (durationEl) durationEl.innerText = `${mins}:${secs}`;
-            }, 1000);
-        }
 
         function evaluateUserAccess() {
             if (!currentUser) return;
@@ -740,7 +555,6 @@
         onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
             state.refusedMembers = {};
             snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
-            evaluateUserAccess();
             renderAll();
         });
 
@@ -750,45 +564,8 @@
             renderAll();
         });
 
-        // Robust Call Listener with Normalized Lowercase Email Matching
-        onSnapshot(collection(db, "calls"), (snapshot) => {
-            if (!currentUser) return;
-            let activeCallExists = false;
-            const myEmail = currentUser.email.toLowerCase();
-
-            snapshot.forEach((docSnap) => {
-                const call = docSnap.data();
-                if (call.id === activeCallId) {
-                    activeCallExists = true;
-                    if (call.status === "rejected") {
-                        alert("Call was rejected.");
-                        endActiveCallLocally();
-                    } else if (call.status === "ended") {
-                        endActiveCallLocally();
-                    }
-                }
-                
-                const target = call.targetEmail ? call.targetEmail.toLowerCase() : "";
-                if (target === myEmail && call.status === "ringing" && !activeCallId) {
-                    activeCallId = call.id;
-                    document.getElementById('caller-name').innerText = call.callerName || 'Library Member';
-                    document.getElementById('caller-email').innerText = call.callerEmail || '';
-                    openModal('incoming-call-modal');
-                } else if (call.id === activeCallId && call.status === "answered") {
-                    closeModal('incoming-call-modal');
-                    openModal('active-call-modal');
-                    loadAudioRoom(call.roomName || 'LWCS_Default_Room');
-                    startCallTimer();
-                }
-            });
-
-            if (activeCallId && !activeCallExists) {
-                endActiveCallLocally();
-            }
-        });
-
         window.switchTab = function (tabName) {
-            ['catalog', 'my-books', 'directory', 'approvals', 'members', 'audit'].forEach(t => {
+            ['catalog', 'my-books', 'approvals', 'members', 'audit'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
                 const nav = document.getElementById(`nav-${t}`);
@@ -886,55 +663,6 @@
                     </tr>`;
             }
         };
-
-        function renderDirectory() {
-            const adminCardsContainer = document.getElementById('admin-directory-cards');
-            if (adminCardsContainer) {
-                adminCardsContainer.innerHTML = ADMIN_EMAILS.map(email => `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
-                                ${email.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-slate-900 text-sm">Library Administrator</h4>
-                                <p class="text-xs text-slate-500 font-mono">${email}</p>
-                            </div>
-                        </div>
-                        <button onclick="startCallTo('${email}', 'Admin (${email.split('@')[0]})')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1">
-                            <i class="fa-solid fa-phone"></i>
-                            <span>Call</span>
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            const directoryTbody = document.getElementById('directory-table-body');
-            if (directoryTbody) {
-                directoryTbody.innerHTML = '';
-                const membersList = Object.values(state.members);
-                if (membersList.length === 0) {
-                    directoryTbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">No approved members found.</td></tr>`;
-                } else {
-                    for (let m of membersList) {
-                        directoryTbody.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-3 font-mono text-xs text-slate-500">${m.id}</td>
-                                <td class="p-3 font-medium text-slate-900">${m.name}</td>
-                                <td class="p-3 text-slate-600 text-xs">
-                                    Formation: ${m.formation || '—'}<br>Address: ${m.address || '—'}
-                                </td>
-                                <td class="p-3 text-right">
-                                    <button onclick="startCallTo('${m.id}', '${m.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition inline-flex items-center space-x-1">
-                                        <i class="fa-solid fa-phone"></i>
-                                        <span>Call Member</span>
-                                    </button>
-                                </td>
-                            </tr>`;
-                    }
-                }
-            }
-        }
 
         function renderMembers() {
             const approvalsTbody = document.getElementById('approvals-table-body');
@@ -1063,7 +791,6 @@
         function renderAll() {
             renderStats();
             renderCatalog();
-            renderDirectory();
             renderMembers();
             renderTransactions();
         }
