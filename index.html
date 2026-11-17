@@ -180,7 +180,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-search"></i>
                     </span>
-                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search catalog by title, author, category, call number..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search by title, author, accession #, Dewey, subject, shelf..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Add New Book
@@ -192,10 +192,11 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-3">Call Number / ID</th>
+                                <th class="p-3">Accession # / Dewey</th>
                                 <th class="p-3">Title & Author</th>
-                                <th class="p-3">Category / Year</th>
-                                <th class="p-3">Location</th>
+                                <th class="p-3">Subject / Category</th>
+                                <th class="p-3">Edition / Vol / Year</th>
+                                <th class="p-3">Shelf-Row Location</th>
                                 <th class="p-3">Stock</th>
                                 <th id="book-actions-th" class="admin-only hidden p-3 text-right">Actions</th>
                             </tr>
@@ -315,44 +316,63 @@
 
     <!-- MODAL: ADD BOOK -->
     <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
-        <div class="bg-white text-slate-800 rounded-xl max-w-lg w-full p-6 shadow-xl my-8">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Book to Catalog</h3>
+        <div class="bg-white text-slate-800 rounded-xl max-w-xl w-full p-6 shadow-xl my-8">
+            <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-book-medical text-indigo-600 mr-2"></i>Add New Book to Catalog</h3>
             <form onsubmit="handleAddBook(event)" class="space-y-3">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Call Number</label>
-                        <input type="text" id="new-book-callNumber" placeholder="e.g. 2085" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Accession Number <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-accessionNumber" placeholder="e.g. ACC-2026-001 or 2085" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Category</label>
-                        <input type="text" id="new-book-category" placeholder="Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal System <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-dewey" placeholder="e.g. 100 / 230.2 / 510" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Title</label>
-                    <input type="text" id="new-book-title" placeholder="Book Title" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Book Title <span class="text-rose-500">*</span></label>
+                    <input type="text" id="new-book-title" placeholder="Full Book Title" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
+
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Author</label>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Author <span class="text-rose-500">*</span></label>
                     <input type="text" id="new-book-author" placeholder="Author Name" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Pub. Year</label>
-                        <input type="text" id="new-book-year" placeholder="1993" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Subject / Category <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-category" placeholder="e.g. Philosophy, Theology, Science" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Location / Shelf</label>
-                        <input type="text" id="new-book-location" placeholder="Shelf 4, Row 4" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Shelf-Row Location <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-location" placeholder="e.g. Shelf 1, Row 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies</label>
-                    <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Year of Pub. <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-year" placeholder="e.g. 1993" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Edition <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-edition" placeholder="e.g. 1st / Rev." class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Volume <span class="text-rose-500">*</span></label>
+                        <input type="text" id="new-book-volume" placeholder="e.g. Vol. 1 / N/A" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies <span class="text-rose-500">*</span></label>
+                        <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-200">
                     <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100 text-sm">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm">Save Book</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Save Book</button>
                 </div>
             </form>
         </div>
@@ -362,7 +382,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQy-Sl2T3Pzb7O4cdkN-p9q2qfvoqiTss",
@@ -390,24 +410,24 @@
 
         // BACKUP DATA LOADED FROM JSON (lwcs-library-backup.json)
         const BACKUP_BOOKS = [
-            { id: "b-e67eace5-0da2-482b-a970-4f54dc81d4dc", title: "CHRISTIAN PHILOSOPHY", author: "Etienne H. Gilson", category: "Philosophy", year: "1993", callNumber: "2085", location: "Shelf 4, Row 4", totalCopies: 1, availableCopies: 1 },
-            { id: "b-3e0651b4-f7af-4b9a-abfc-32fb8595c1dd", title: "Catechism of the Catholic Church", author: "-", category: "-", year: "1994", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-d2752c43-51e2-4d8b-99ae-e1301728f8e1", title: "Proving the Catholic Faith is Biblical", author: "Dave Armstrong", category: "Catholic Church - Apologetic Works, Doctrines", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-82198eff-4429-4647-afe9-a153e865f3e3", title: "Reading the Church Fathers", author: "James L. Papandrea", category: "-", year: "2022", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-31098523-4900-44ac-a902-95e1babe5fe7", title: "Mathematics Methods Revision Series Units 1 and 2 Year 11", author: "O.T. Lee", category: "Mathematics", year: "-", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-9c0db81d-5e78-4390-98ec-474df48e1095", title: "Mathematics Methods - Units 3 and 4 Year 12 ATAR COURSE", author: "Greg Hill", category: "Mathematics", year: "2016", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-a9638c34-e4aa-4890-8023-59c13a2ca367", title: "Mathematics Methods ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-8a57e05d-dd3f-408f-8c0c-94327db6d533", title: "Mathematics Specialist ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-2df8f84e-f7f0-4a15-9284-819225b6c2ea", title: "The Great Courses Study Workbook for Basic Math", author: "Murray H. Siegel, Ph.D.", category: "Mathematics", year: "1997", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-c3d20c15-03a8-4aef-80b9-be22aa20a6b9", title: "Algebra I Course Workbook", author: "James A. Sellers, Ph.D.", category: "Mathematics", year: "2009", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-b8de99a7-c3be-4337-ac68-e71b7e98290a", title: "Exploring Physics Year 12 Experiments, Investigations, and Problems", author: "Geoff Lewis, Malcolm Johnson, Dr. Warren Stannard", category: "Science", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-7bda5491-0f9a-45f6-8d95-c1ee5472f20b", title: "Creelman Exam Questions PHYSICS", author: "Roy Skinner", category: "Science", year: "2017", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-25bb27a8-4765-46e4-b97c-d90e16b1e227", title: "The Oxford Handbook of Philosophy of Religion", author: "William J. Wainwright", category: "Philosophy", year: "2005", callNumber: "-", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
-            { id: "b-87e2fbea-b4cb-4cac-8878-dfb75c085da9", title: "Nelson Chemistry Units 1 and 2 for the Australian Curriculum", author: "Debra Smith, Anna Davis, Anne Disney", category: "Science", year: "2014", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-93447507-b0a8-42dd-be8b-c76d7264d6de", title: "Roman Catholic Political Philosophy", author: "James V. Schall", category: "Christianity and Politics", year: "2004", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-4504ff8f-8c2d-40a8-a6f6-543cafd3da16", title: "The New WEBSTER'S INTERNATIONAL Encyclopedia", author: "Michael D. Harkavy", category: "Encyclopedia", year: "1991", callNumber: "196", location: "Shelf 42, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-171792ee-897d-4189-b403-75639f8707d5", title: "GOD AND HIS CREATURES THEODICY", author: "Celestine N. Bittle", category: "Philosophy", year: "1953", callNumber: "0413C9", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
-            { id: "b-d94be3c8-255b-4795-b8bb-431d0c05edde", title: "BELIEF IN GOD", author: "T. J. Mawson", category: "Philosophy", year: "2005", callNumber: "2031", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 }
+            { id: "b-e67eace5-0da2-482b-a970-4f54dc81d4dc", title: "CHRISTIAN PHILOSOPHY", author: "Etienne H. Gilson", category: "Philosophy", year: "1993", accessionNumber: "2085", deweyDecimal: "189", edition: "1st", volume: "N/A", location: "Shelf 4, Row 4", totalCopies: 1, availableCopies: 1 },
+            { id: "b-3e0651b4-f7af-4b9a-abfc-32fb8595c1dd", title: "Catechism of the Catholic Church", author: "-", category: "Theology", year: "1994", accessionNumber: "-", deweyDecimal: "238.2", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-d2752c43-51e2-4d8b-99ae-e1301728f8e1", title: "Proving the Catholic Faith is Biblical", author: "Dave Armstrong", category: "Catholic Church - Apologetic Works, Doctrines", year: "2015", accessionNumber: "-", deweyDecimal: "230.2", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-82198eff-4429-4647-afe9-a153e865f3e3", title: "Reading the Church Fathers", author: "James L. Papandrea", category: "Patristics", year: "2022", accessionNumber: "-", deweyDecimal: "270.1", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-31098523-4900-44ac-a902-95e1babe5fe7", title: "Mathematics Methods Revision Series Units 1 and 2 Year 11", author: "O.T. Lee", category: "Mathematics", year: "-", accessionNumber: "-", deweyDecimal: "510", edition: "Revision", volume: "Units 1-2", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-9c0db81d-5e78-4390-98ec-474df48e1095", title: "Mathematics Methods - Units 3 and 4 Year 12 ATAR COURSE", author: "Greg Hill", category: "Mathematics", year: "2016", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-a9638c34-e4aa-4890-8023-59c13a2ca367", title: "Mathematics Methods ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-8a57e05d-dd3f-408f-8c0c-94327db6d533", title: "Mathematics Specialist ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-2df8f84e-f7f0-4a15-9284-819225b6c2ea", title: "The Great Courses Study Workbook for Basic Math", author: "Murray H. Siegel, Ph.D.", category: "Mathematics", year: "1997", accessionNumber: "-", deweyDecimal: "510", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-c3d20c15-03a8-4aef-80b9-be22aa20a6b9", title: "Algebra I Course Workbook", author: "James A. Sellers, Ph.D.", category: "Mathematics", year: "2009", accessionNumber: "-", deweyDecimal: "512", edition: "1st", volume: "Vol. 1", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-b8de99a7-c3be-4337-ac68-e71b7e98290a", title: "Exploring Physics Year 12 Experiments, Investigations, and Problems", author: "Geoff Lewis, Malcolm Johnson, Dr. Warren Stannard", category: "Science", year: "2015", accessionNumber: "-", deweyDecimal: "530", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-7bda5491-0f9a-45f6-8d95-c1ee5472f20b", title: "Creelman Exam Questions PHYSICS", author: "Roy Skinner", category: "Science", year: "2017", accessionNumber: "-", deweyDecimal: "530", edition: "2017 Ed.", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-25bb27a8-4765-46e4-b97c-d90e16b1e227", title: "The Oxford Handbook of Philosophy of Religion", author: "William J. Wainwright", category: "Philosophy", year: "2005", accessionNumber: "-", deweyDecimal: "210", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
+            { id: "b-87e2fbea-b4cb-4cac-8878-dfb75c085da9", title: "Nelson Chemistry Units 1 and 2 for the Australian Curriculum", author: "Debra Smith, Anna Davis, Anne Disney", category: "Science", year: "2014", accessionNumber: "-", deweyDecimal: "540", edition: "1st", volume: "Units 1-2", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-93447507-b0a8-42dd-be8b-c76d7264d6de", title: "Roman Catholic Political Philosophy", author: "James V. Schall", category: "Christianity and Politics", year: "2004", accessionNumber: "-", deweyDecimal: "261.7", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-4504ff8f-8c2d-40a8-a6f6-543cafd3da16", title: "The New WEBSTER'S INTERNATIONAL Encyclopedia", author: "Michael D. Harkavy", category: "Encyclopedia", year: "1991", accessionNumber: "196", deweyDecimal: "031", edition: "New Int'l", volume: "N/A", location: "Shelf 42, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-171792ee-897d-4189-b403-75639f8707d5", title: "GOD AND HIS CREATURES THEODICY", author: "Celestine N. Bittle", category: "Philosophy", year: "1953", accessionNumber: "0413C9", deweyDecimal: "214", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
+            { id: "b-d94be3c8-255b-4795-b8bb-431d0c05edde", title: "BELIEF IN GOD", author: "T. J. Mawson", category: "Philosophy", year: "2005", accessionNumber: "2031", deweyDecimal: "212.1", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 }
         ];
 
         const BACKUP_MEMBERS = [
@@ -457,12 +477,10 @@
             }
         };
 
-        // AUTO-SEED BACKUP DATA TO FIRESTORE IF EMPTY
         async function checkAndSeedDatabase() {
             try {
                 const booksSnap = await getDocs(collection(db, "books"));
                 if (booksSnap.empty) {
-                    console.log("Seeding backup books into Firestore...");
                     for (let book of BACKUP_BOOKS) {
                         await setDoc(doc(db, "books", book.id), book);
                     }
@@ -470,7 +488,6 @@
 
                 const membersSnap = await getDocs(collection(db, "members"));
                 if (membersSnap.empty) {
-                    console.log("Seeding backup members into Firestore...");
                     for (let m of BACKUP_MEMBERS) {
                         await setDoc(doc(db, "members", m.email), m);
                     }
@@ -564,8 +581,6 @@
         }
 
         // Firestore Real-Time Listeners
-        import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
         onSnapshot(collection(db, "books"), (snapshot) => {
             state.books = {};
             snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
@@ -649,38 +664,54 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const booksList = Object.values(state.books).filter(book =>
-                (book.title && book.title.toLowerCase().includes(query)) ||
-                (book.author && book.author.toLowerCase().includes(query)) ||
-                (book.callNumber && book.callNumber.toLowerCase().includes(query)) ||
-                (book.category && book.category.toLowerCase().includes(query)) ||
-                (book.location && book.location.toLowerCase().includes(query))
-            );
+            const booksList = Object.values(state.books).filter(book => {
+                const accNum = (book.accessionNumber || book.callNumber || '').toLowerCase();
+                const dewey = (book.deweyDecimal || '').toLowerCase();
+                const ed = (book.edition || '').toLowerCase();
+                const vol = (book.volume || '').toLowerCase();
+                return (book.title && book.title.toLowerCase().includes(query)) ||
+                    (book.author && book.author.toLowerCase().includes(query)) ||
+                    accNum.includes(query) ||
+                    dewey.includes(query) ||
+                    ed.includes(query) ||
+                    vol.includes(query) ||
+                    (book.category && book.category.toLowerCase().includes(query)) ||
+                    (book.location && book.location.toLowerCase().includes(query));
+            });
 
             if (booksList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 6 : 5}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
                 return;
             }
 
             for (let book of booksList) {
                 const available = book.availableCopies !== undefined ? book.availableCopies : (book.available || 1);
                 const total = book.totalCopies !== undefined ? book.totalCopies : (book.total || 1);
+                const accessionNum = book.accessionNumber || book.callNumber || '—';
+                const deweyNum = book.deweyDecimal || '—';
+                const editionStr = book.edition || '—';
+                const volumeStr = book.volume || '—';
+                const yearStr = book.year || '—';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 text-xs">
-                        <td class="p-3 font-mono text-indigo-700 font-bold">
-                            ${book.callNumber || '—'}<br>
-                            <span class="text-[10px] text-slate-400">ID: ${book.id}</span>
+                        <td class="p-3 font-mono">
+                            <span class="text-indigo-700 font-bold" title="Accession Number">Acc: ${accessionNum}</span><br>
+                            <span class="text-slate-600 font-semibold" title="Dewey Decimal System">DDC: ${deweyNum}</span>
                         </td>
                         <td class="p-3">
                             <span class="font-medium text-slate-900 text-sm">${book.title}</span><br>
                             <span class="text-slate-600">By ${book.author}</span>
                         </td>
                         <td class="p-3 text-slate-600">
-                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.category || 'Philosophy'}</span><br>
-                            <span class="text-slate-400">Year: ${book.year || '—'}</span>
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.category || 'General'}</span>
+                        </td>
+                        <td class="p-3 text-slate-600">
+                            <div><span class="font-semibold">Ed:</span> ${editionStr} | <span class="font-semibold">Vol:</span> ${volumeStr}</div>
+                            <div class="text-slate-400">Year: ${yearStr}</div>
                         </td>
                         <td class="p-3 font-medium text-slate-700">
-                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || 'Shelf 1'}
+                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || 'Shelf 1, Row 1'}
                         </td>
                         <td class="p-3">
                             <span class="px-2 py-1 rounded-full font-semibold ${available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
@@ -755,7 +786,7 @@
             const availableBooks = Object.values(state.books).filter(b => (b.availableCopies !== undefined ? b.availableCopies : (b.available || 1)) > 0);
             if (bookSelect) {
                 bookSelect.innerHTML = availableBooks.length
-                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Call #: ${b.callNumber || 'N/A'})</option>`).join('')
+                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Acc #: ${b.accessionNumber || b.callNumber || 'N/A'})</option>`).join('')
                     : '<option value="" disabled selected>No books available</option>';
             }
 
@@ -895,24 +926,31 @@
             e.preventDefault();
             if (!isAdmin) return;
             const id = "b-" + Date.now();
-            const callNumber = document.getElementById('new-book-callNumber').value.trim();
-            const category = document.getElementById('new-book-category').value.trim();
+            const accessionNumber = document.getElementById('new-book-accessionNumber').value.trim();
+            const deweyDecimal = document.getElementById('new-book-dewey').value.trim();
             const title = document.getElementById('new-book-title').value.trim();
             const author = document.getElementById('new-book-author').value.trim();
-            const year = document.getElementById('new-book-year').value.trim();
+            const category = document.getElementById('new-book-category').value.trim();
             const location = document.getElementById('new-book-location').value.trim();
+            const year = document.getElementById('new-book-year').value.trim();
+            const edition = document.getElementById('new-book-edition').value.trim();
+            const volume = document.getElementById('new-book-volume').value.trim();
             const copies = parseInt(document.getElementById('new-book-copies').value, 10);
 
             try {
                 const bookRef = doc(db, "books", id);
                 const bookData = {
                     id,
-                    callNumber,
-                    category,
+                    accessionNumber,
+                    callNumber: accessionNumber, // Kept for backward compatibility
+                    deweyDecimal,
                     title,
                     author,
-                    year,
+                    category,
                     location,
+                    year,
+                    edition,
+                    volume,
                     totalCopies: copies,
                     availableCopies: copies
                 };
