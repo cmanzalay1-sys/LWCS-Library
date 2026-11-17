@@ -105,8 +105,12 @@
                     </div>
                 </div>
 
-                <!-- Live Clock, Date & User Profile Bar -->
-                <div class="flex items-center space-x-4">
+                <!-- Live Clock, Date, Refresh Button & User Profile Bar -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="manualRefresh()" title="Refresh Data" class="bg-indigo-700 hover:bg-indigo-800 text-indigo-100 p-2.5 rounded-lg border border-indigo-500 transition flex items-center justify-center">
+                        <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                    </button>
+
                     <div id="live-datetime" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg border border-indigo-400/30 font-mono text-xs tracking-wider text-center">
                         Loading Date & Time...
                     </div>
@@ -375,6 +379,15 @@
             }
         }, 1000);
 
+        window.manualRefresh = function() {
+            const icon = document.getElementById('refresh-icon');
+            if (icon) icon.classList.add('fa-spin');
+            renderAll();
+            setTimeout(() => {
+                if (icon) icon.classList.remove('fa-spin');
+            }, 600);
+        };
+
         window.loginWithGoogle = async function () {
             try {
                 await signInWithPopup(auth, googleProvider);
@@ -463,35 +476,30 @@
             }
         }
 
-        // Firestore data listeners
+        // Optimized Instant Firestore Real-time Listeners
         onSnapshot(collection(db, "books"), (snapshot) => {
-            const booksData = {};
-            snapshot.forEach((docSnap) => { booksData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            state.books = booksData;
+            state.books = {};
+            snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             renderAll();
         });
 
         onSnapshot(collection(db, "members"), (snapshot) => {
-            const membersData = {};
-            snapshot.forEach((docSnap) => { membersData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            state.members = membersData;
-            if (currentUser && !isAdmin) {
-                if (membersData[currentUser.email]) {
-                    document.getElementById('pending-gateway').classList.add('hidden');
-                    document.getElementById('rejected-gateway').classList.add('hidden');
-                    document.getElementById('app-container').classList.remove('hidden');
-                    updateAuthUI();
-                }
+            state.members = {};
+            snapshot.forEach((docSnap) => { state.members[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            if (currentUser && !isAdmin && state.members[currentUser.email]) {
+                document.getElementById('pending-gateway').classList.add('hidden');
+                document.getElementById('rejected-gateway').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                updateAuthUI();
             }
             renderAll();
         });
 
         onSnapshot(collection(db, "pendingMembers"), (snapshot) => {
-            const pendingData = {};
-            snapshot.forEach((docSnap) => { pendingData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            state.pendingMembers = pendingData;
+            state.pendingMembers = {};
+            snapshot.forEach((docSnap) => { state.pendingMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             if (currentUser && !isAdmin) {
-                if (!state.members[currentUser.email] && !state.refusedMembers[currentUser.email] && pendingData[currentUser.email]) {
+                if (!state.members[currentUser.email] && !state.refusedMembers[currentUser.email] && state.pendingMembers[currentUser.email]) {
                     document.getElementById('app-container').classList.add('hidden');
                     document.getElementById('pending-gateway').classList.remove('hidden');
                 }
@@ -500,24 +508,20 @@
         });
 
         onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
-            const refusedData = {};
-            snapshot.forEach((docSnap) => { refusedData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            state.refusedMembers = refusedData;
-            if (currentUser && !isAdmin) {
-                if (refusedData[currentUser.email]) {
-                    document.getElementById('app-container').classList.add('hidden');
-                    document.getElementById('pending-gateway').classList.add('hidden');
-                    document.getElementById('registration-gateway').classList.add('hidden');
-                    document.getElementById('rejected-gateway').classList.remove('hidden');
-                }
+            state.refusedMembers = {};
+            snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            if (currentUser && !isAdmin && state.refusedMembers[currentUser.email]) {
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('pending-gateway').classList.add('hidden');
+                document.getElementById('registration-gateway').classList.add('hidden');
+                document.getElementById('rejected-gateway').classList.remove('hidden');
             }
             renderAll();
         });
 
         onSnapshot(collection(db, "transactions"), (snapshot) => {
-            const txData = {};
-            snapshot.forEach((docSnap) => { txData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            state.transactions = txData;
+            state.transactions = {};
+            snapshot.forEach((docSnap) => { state.transactions[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             renderAll();
         });
 
@@ -545,23 +549,30 @@
 
         function renderStats() {
             const totalBooks = Object.values(state.books).reduce((acc, b) => acc + (b.available || 0), 0);
-            document.getElementById('stat-books').innerText = totalBooks;
+            const statBooks = document.getElementById('stat-books');
+            if (statBooks) statBooks.innerText = totalBooks;
 
             if (isAdmin) {
-                document.getElementById('stat-members').innerText = Object.keys(state.members).length;
+                const statMembers = document.getElementById('stat-members');
+                if (statMembers) statMembers.innerText = Object.keys(state.members).length;
                 const activeLoans = Object.values(state.transactions).filter(tx => !tx.returned).length;
-                document.getElementById('stat-loans').innerText = activeLoans;
+                const statLoans = document.getElementById('stat-loans');
+                if (statLoans) statLoans.innerText = activeLoans;
             } else {
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser.email);
+                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser?.email);
                 const myActive = myTxs.filter(tx => !tx.returned).length;
-                document.getElementById('stat-members').innerText = myTxs.length;
-                document.getElementById('stat-loans').innerText = myActive;
+                const statMembers = document.getElementById('stat-members');
+                if (statMembers) statMembers.innerText = myTxs.length;
+                const statLoans = document.getElementById('stat-loans');
+                if (statLoans) statLoans.innerText = myActive;
             }
         }
 
         window.renderCatalog = function () {
-            const query = document.getElementById('search-input').value.toLowerCase();
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
             const tbody = document.getElementById('book-table-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             const booksList = Object.values(state.books).filter(book =>
@@ -690,7 +701,7 @@
             }
 
             const userHistoryTbody = document.getElementById('user-history-table-body');
-            if (userHistoryTbody) {
+            if (userHistoryTbody && currentUser) {
                 userHistoryTbody.innerHTML = '';
                 const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser.email);
                 if (myTxs.length === 0) {
@@ -770,7 +781,6 @@
         window.refuseMember = async function (email) {
             if (!isAdmin) return;
             try {
-                // Move from pending to refused collection so user is notified
                 const pendingData = state.pendingMembers[email] || { email };
                 await setDoc(doc(db, "refusedMembers", email), pendingData);
                 await deleteDoc(doc(db, "pendingMembers", email));
