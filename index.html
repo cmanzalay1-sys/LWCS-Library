@@ -18,7 +18,7 @@
                 <i class="fa-solid fa-book-open-reader"></i>
             </div>
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">LWCS Library Portal</h1>
+                <h1 id="library-title-banner" class="text-2xl font-bold tracking-tight text-white">LWCS Library Portal</h1>
                 <p class="text-sm text-slate-400 mt-2">Sign in with your Google account to access your library dashboard or admin controls.</p>
             </div>
             <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-800 font-medium py-3 px-4 rounded-xl shadow-md flex items-center justify-center space-x-3 transition transform active:scale-[0.98]">
@@ -50,12 +50,12 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Formation Level</label>
-                        <input type="text" id="self-reg-formation" placeholder="e.g. Senior / Year 3" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                        <input type="text" id="self-reg-formation" placeholder="e.g. Seminarian / Year 3" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Address</label>
-                    <input type="text" id="self-reg-address" placeholder="123 Street Name" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                    <input type="text" id="self-reg-address" placeholder="Sitio Mojon, Binicuil" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-md mt-2">
                     Submit Registration for Approval
@@ -104,7 +104,7 @@
                 <div class="flex items-center space-x-3">
                     <i class="fa-solid fa-book-open-reader text-3xl"></i>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight">LWCS Library</h1>
+                        <h1 id="app-header-title" class="text-2xl font-bold tracking-tight">LWCS Library</h1>
                         <p id="role-badge" class="text-xs text-indigo-200">Role: Loading...</p>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-search"></i>
                     </span>
-                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search catalog by title, author, subject, Dewey..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search catalog by title, author, category, call number..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Add New Book
@@ -192,10 +192,9 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-3">Accession / ID</th>
+                                <th class="p-3">Call Number / ID</th>
                                 <th class="p-3">Title & Author</th>
-                                <th class="p-3">Subject / Dewey</th>
-                                <th class="p-3">Pub. Year / Ed / Vol</th>
+                                <th class="p-3">Category / Year</th>
                                 <th class="p-3">Location</th>
                                 <th class="p-3">Stock</th>
                                 <th id="book-actions-th" class="admin-only hidden p-3 text-right">Actions</th>
@@ -217,6 +216,7 @@
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                                 <th class="p-3">Book Title</th>
                                 <th class="p-3">Borrowed At</th>
+                                <th class="p-3">Due Date</th>
                                 <th class="p-3">Status</th>
                                 <th class="p-3 text-right">Returned At</th>
                             </tr>
@@ -237,9 +237,8 @@
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                                 <th class="p-4">Email</th>
                                 <th class="p-4">Name</th>
-                                <th class="p-4">Age</th>
                                 <th class="p-4">Address</th>
-                                <th class="p-4">Formation Level</th>
+                                <th class="p-4">Role</th>
                                 <th class="p-4 text-right">Action</th>
                             </tr>
                         </thead>
@@ -261,9 +260,8 @@
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                                 <th class="p-4">Email / ID</th>
                                 <th class="p-4">Name</th>
-                                <th class="p-4">Age</th>
-                                <th class="p-4">Address</th>
-                                <th class="p-4">Formation Level</th>
+                                <th class="p-4">Member Number</th>
+                                <th class="p-4">Role</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -294,14 +292,14 @@
 
                 <!-- Admin Audit Log Table -->
                 <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Trace Borrow History & Status</h3>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Active Loans & History</h3>
                     <div class="overflow-y-auto max-h-96">
                         <table class="w-full text-left text-sm">
                             <thead>
                                 <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                                     <th class="p-3">Member</th>
                                     <th class="p-3">Book</th>
-                                    <th class="p-3">Borrow Time</th>
+                                    <th class="p-3">Checkout / Due</th>
                                     <th class="p-3">Status</th>
                                     <th class="p-3 text-right">Action</th>
                                 </tr>
@@ -322,12 +320,12 @@
             <form onsubmit="handleAddBook(event)" class="space-y-3">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Accession Number</label>
-                        <input type="text" id="new-book-accession" placeholder="e.g. ACC-2026-001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Call Number</label>
+                        <input type="text" id="new-book-callNumber" placeholder="e.g. 2085" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Book ID / Call No.</label>
-                        <input type="text" id="new-book-id" placeholder="e.g. B001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Category</label>
+                        <input type="text" id="new-book-category" placeholder="Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
                 <div>
@@ -338,39 +336,19 @@
                     <label class="block text-xs font-medium text-slate-700 mb-1">Author</label>
                     <input type="text" id="new-book-author" placeholder="Author Name" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1">Pub. Year</label>
-                        <input type="number" id="new-book-year" placeholder="2026" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <input type="text" id="new-book-year" placeholder="1993" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Edition</label>
-                        <input type="text" id="new-book-edition" placeholder="1st / Rev." class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Volume</label>
-                        <input type="text" id="new-book-volume" placeholder="Vol. 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Location / Shelf</label>
+                        <input type="text" id="new-book-location" placeholder="Shelf 4, Row 4" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Shelf-Row Location</label>
-                        <input type="text" id="new-book-location" placeholder="e.g. Shelf 1, Row 2" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Subject / Category</label>
-                        <input type="text" id="new-book-subject" placeholder="e.g. Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal System</label>
-                        <input type="text" id="new-book-ddc" placeholder="e.g. 100 - Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies</label>
-                        <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies</label>
+                    <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
                 <div class="flex justify-end space-x-3 pt-4">
                     <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100 text-sm">Cancel</button>
@@ -384,7 +362,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCQy-Sl2T3Pzb7O4cdkN-p9q2qfvoqiTss",
@@ -406,9 +384,39 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {}, settings: {} };
         let currentUser = null;
         let isAdmin = false;
+
+        // BACKUP DATA LOADED FROM JSON (lwcs-library-backup.json)
+        const BACKUP_BOOKS = [
+            { id: "b-e67eace5-0da2-482b-a970-4f54dc81d4dc", title: "CHRISTIAN PHILOSOPHY", author: "Etienne H. Gilson", category: "Philosophy", year: "1993", callNumber: "2085", location: "Shelf 4, Row 4", totalCopies: 1, availableCopies: 1 },
+            { id: "b-3e0651b4-f7af-4b9a-abfc-32fb8595c1dd", title: "Catechism of the Catholic Church", author: "-", category: "-", year: "1994", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-d2752c43-51e2-4d8b-99ae-e1301728f8e1", title: "Proving the Catholic Faith is Biblical", author: "Dave Armstrong", category: "Catholic Church - Apologetic Works, Doctrines", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-82198eff-4429-4647-afe9-a153e865f3e3", title: "Reading the Church Fathers", author: "James L. Papandrea", category: "-", year: "2022", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-31098523-4900-44ac-a902-95e1babe5fe7", title: "Mathematics Methods Revision Series Units 1 and 2 Year 11", author: "O.T. Lee", category: "Mathematics", year: "-", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-9c0db81d-5e78-4390-98ec-474df48e1095", title: "Mathematics Methods - Units 3 and 4 Year 12 ATAR COURSE", author: "Greg Hill", category: "Mathematics", year: "2016", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-a9638c34-e4aa-4890-8023-59c13a2ca367", title: "Mathematics Methods ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-8a57e05d-dd3f-408f-8c0c-94327db6d533", title: "Mathematics Specialist ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-2df8f84e-f7f0-4a15-9284-819225b6c2ea", title: "The Great Courses Study Workbook for Basic Math", author: "Murray H. Siegel, Ph.D.", category: "Mathematics", year: "1997", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-c3d20c15-03a8-4aef-80b9-be22aa20a6b9", title: "Algebra I Course Workbook", author: "James A. Sellers, Ph.D.", category: "Mathematics", year: "2009", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-b8de99a7-c3be-4337-ac68-e71b7e98290a", title: "Exploring Physics Year 12 Experiments, Investigations, and Problems", author: "Geoff Lewis, Malcolm Johnson, Dr. Warren Stannard", category: "Science", year: "2015", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-7bda5491-0f9a-45f6-8d95-c1ee5472f20b", title: "Creelman Exam Questions PHYSICS", author: "Roy Skinner", category: "Science", year: "2017", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-25bb27a8-4765-46e4-b97c-d90e16b1e227", title: "The Oxford Handbook of Philosophy of Religion", author: "William J. Wainwright", category: "Philosophy", year: "2005", callNumber: "-", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
+            { id: "b-87e2fbea-b4cb-4cac-8878-dfb75c085da9", title: "Nelson Chemistry Units 1 and 2 for the Australian Curriculum", author: "Debra Smith, Anna Davis, Anne Disney", category: "Science", year: "2014", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-93447507-b0a8-42dd-be8b-c76d7264d6de", title: "Roman Catholic Political Philosophy", author: "James V. Schall", category: "Christianity and Politics", year: "2004", callNumber: "-", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
+            { id: "b-4504ff8f-8c2d-40a8-a6f6-543cafd3da16", title: "The New WEBSTER'S INTERNATIONAL Encyclopedia", author: "Michael D. Harkavy", category: "Encyclopedia", year: "1991", callNumber: "196", location: "Shelf 42, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-171792ee-897d-4189-b403-75639f8707d5", title: "GOD AND HIS CREATURES THEODICY", author: "Celestine N. Bittle", category: "Philosophy", year: "1953", callNumber: "0413C9", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
+            { id: "b-d94be3c8-255b-4795-b8bb-431d0c05edde", title: "BELIEF IN GOD", author: "T. J. Mawson", category: "Philosophy", year: "2005", callNumber: "2031", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 }
+        ];
+
+        const BACKUP_MEMBERS = [
+            { email: "aldrianbastidacanoy@gmail.com", name: "Aldrian Canoy", memberNumber: "LWCS-2026-001", role: "Seminarian", address: "Sitio Mojon, Binicuil, Kabankalan City" },
+            { email: "daniel.reyes@lwcs.edu", name: "Daniel Reyes", memberNumber: "LWCS-2026-014", role: "Seminarian", address: "Kabankalan City" },
+            { email: "maria.santos@lwcs.edu", name: "Maria Santos", memberNumber: "LWCS-2026-021", role: "Faculty", address: "Kabankalan City" },
+            { email: "joseph.cruz@lwcs.edu", name: "Joseph Dela Cruz", memberNumber: "LWCS-2026-032", role: "Seminarian", address: "Kabankalan City" },
+            { email: "anna.villanueva@lwcs.edu", name: "Anna Villanueva", memberNumber: "LWCS-2026-008", role: "Staff", address: "Kabankalan City" }
+        ];
 
         // Live Clock & Date Interval
         setInterval(() => {
@@ -449,6 +457,29 @@
             }
         };
 
+        // AUTO-SEED BACKUP DATA TO FIRESTORE IF EMPTY
+        async function checkAndSeedDatabase() {
+            try {
+                const booksSnap = await getDocs(collection(db, "books"));
+                if (booksSnap.empty) {
+                    console.log("Seeding backup books into Firestore...");
+                    for (let book of BACKUP_BOOKS) {
+                        await setDoc(doc(db, "books", book.id), book);
+                    }
+                }
+
+                const membersSnap = await getDocs(collection(db, "members"));
+                if (membersSnap.empty) {
+                    console.log("Seeding backup members into Firestore...");
+                    for (let m of BACKUP_MEMBERS) {
+                        await setDoc(doc(db, "members", m.email), m);
+                    }
+                }
+            } catch (e) {
+                console.error("Seeding check error:", e);
+            }
+        }
+
         function evaluateUserAccess() {
             if (!currentUser) return;
             
@@ -474,9 +505,9 @@
                 return;
             }
 
-            const isApproved = state.members[userEmailLower] || state.members[currentUser.email];
-            const isPending = state.pendingMembers[userEmailLower] || state.pendingMembers[currentUser.email];
-            const isRefused = state.refusedMembers[userEmailLower] || state.refusedMembers[currentUser.email];
+            const isApproved = state.members[userEmailLower];
+            const isPending = state.pendingMembers[userEmailLower];
+            const isRefused = state.refusedMembers[userEmailLower];
 
             if (isApproved) {
                 appContainer.classList.remove('hidden');
@@ -491,10 +522,11 @@
             }
         }
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(user.email.toLowerCase());
+                await checkAndSeedDatabase();
                 evaluateUserAccess();
             } else {
                 currentUser = null;
@@ -532,6 +564,8 @@
         }
 
         // Firestore Real-Time Listeners
+        import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
         onSnapshot(collection(db, "books"), (snapshot) => {
             state.books = {};
             snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
@@ -587,20 +621,20 @@
         };
 
         function renderStats() {
-            const totalBooks = Object.values(state.books).reduce((acc, b) => acc + (b.available || 0), 0);
+            const totalBooks = Object.values(state.books).reduce((acc, b) => acc + (b.availableCopies !== undefined ? b.availableCopies : (b.available || 1)), 0);
             const statBooks = document.getElementById('stat-books');
             if (statBooks) statBooks.innerText = totalBooks;
 
             if (isAdmin) {
                 const statMembers = document.getElementById('stat-members');
                 if (statMembers) statMembers.innerText = Object.keys(state.members).length;
-                const activeLoans = Object.values(state.transactions).filter(tx => !tx.returned).length;
+                const activeLoans = Object.values(state.transactions).filter(tx => !tx.returned && !tx.returnDate).length;
                 const statLoans = document.getElementById('stat-loans');
                 if (statLoans) statLoans.innerText = activeLoans;
             } else if (currentUser) {
                 const myEmail = currentUser.email.toLowerCase();
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail.toLowerCase() === myEmail);
-                const myActive = myTxs.filter(tx => !tx.returned).length;
+                const myTxs = Object.values(state.transactions).filter(tx => (tx.memberEmail && tx.memberEmail.toLowerCase() === myEmail) || (tx.memberId && tx.memberId.toLowerCase() === myEmail));
+                const myActive = myTxs.filter(tx => !tx.returned && !tx.returnDate).length;
                 const statMembers = document.getElementById('stat-members');
                 if (statMembers) statMembers.innerText = myTxs.length;
                 const statLoans = document.getElementById('stat-loans');
@@ -618,42 +652,39 @@
             const booksList = Object.values(state.books).filter(book =>
                 (book.title && book.title.toLowerCase().includes(query)) ||
                 (book.author && book.author.toLowerCase().includes(query)) ||
-                (book.id && book.id.toLowerCase().includes(query)) ||
-                (book.accession && book.accession.toLowerCase().includes(query)) ||
-                (book.subject && book.subject.toLowerCase().includes(query)) ||
-                (book.ddc && book.ddc.toLowerCase().includes(query))
+                (book.callNumber && book.callNumber.toLowerCase().includes(query)) ||
+                (book.category && book.category.toLowerCase().includes(query)) ||
+                (book.location && book.location.toLowerCase().includes(query))
             );
 
             if (booksList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 6 : 5}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
                 return;
             }
 
             for (let book of booksList) {
+                const available = book.availableCopies !== undefined ? book.availableCopies : (book.available || 1);
+                const total = book.totalCopies !== undefined ? book.totalCopies : (book.total || 1);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 text-xs">
-                        <td class="p-3">
-                            <span class="font-bold text-indigo-700">${book.accession || '—'}</span><br>
-                            <span class="font-mono text-slate-500">ID: ${book.id}</span>
+                        <td class="p-3 font-mono text-indigo-700 font-bold">
+                            ${book.callNumber || '—'}<br>
+                            <span class="text-[10px] text-slate-400">ID: ${book.id}</span>
                         </td>
                         <td class="p-3">
                             <span class="font-medium text-slate-900 text-sm">${book.title}</span><br>
                             <span class="text-slate-600">By ${book.author}</span>
                         </td>
-                        <td class="p-3">
-                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.subject || 'General'}</span><br>
-                            <span class="font-mono text-slate-500 mt-1 inline-block">DDC: ${book.ddc || '—'}</span>
-                        </td>
                         <td class="p-3 text-slate-600">
-                            Year: ${book.year || '—'}<br>
-                            Ed: ${book.edition || '—'} | Vol: ${book.volume || '—'}
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.category || 'Philosophy'}</span><br>
+                            <span class="text-slate-400">Year: ${book.year || '—'}</span>
                         </td>
                         <td class="p-3 font-medium text-slate-700">
-                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || '—'}
+                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || 'Shelf 1'}
                         </td>
                         <td class="p-3">
-                            <span class="px-2 py-1 rounded-full font-semibold ${book.available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
-                                ${book.available} / ${book.total}
+                            <span class="px-2 py-1 rounded-full font-semibold ${available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
+                                ${available} / ${total}
                             </span>
                         </td>
                         ${isAdmin ? `
@@ -670,16 +701,15 @@
                 approvalsTbody.innerHTML = '';
                 const pendingList = Object.values(state.pendingMembers);
                 if (pendingList.length === 0) {
-                    approvalsTbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No pending member registrations.</td></tr>`;
+                    approvalsTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No pending member registrations.</td></tr>`;
                 } else {
                     for (let p of pendingList) {
                         approvalsTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
                                 <td class="p-4 font-mono text-xs text-slate-500">${p.email}</td>
                                 <td class="p-4 font-medium text-slate-900">${p.name}</td>
-                                <td class="p-4 text-slate-600">${p.age}</td>
                                 <td class="p-4 text-slate-600">${p.address}</td>
-                                <td class="p-4 text-slate-600">${p.formation}</td>
+                                <td class="p-4 text-slate-600">${p.role || 'Seminarian'}</td>
                                 <td class="p-4 text-right space-x-2">
                                     <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Accept</button>
                                     <button onclick="refuseMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Refuse</button>
@@ -694,18 +724,17 @@
                 tbody.innerHTML = '';
                 const membersList = Object.values(state.members);
                 if (membersList.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No approved members yet.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No approved members yet.</td></tr>`;
                 } else {
                     for (let m of membersList) {
                         tbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
-                                <td class="p-4 font-mono text-xs text-slate-500">${m.id}</td>
+                                <td class="p-4 font-mono text-xs text-slate-500">${m.email || m.id}</td>
                                 <td class="p-4 font-medium text-slate-900">${m.name}</td>
-                                <td class="p-4 text-slate-600">${m.age}</td>
-                                <td class="p-4 text-slate-600">${m.address}</td>
-                                <td class="p-4 text-slate-600">${m.formation}</td>
+                                <td class="p-4 text-slate-600 font-mono">${m.memberNumber || 'LWCS-2026-XXX'}</td>
+                                <td class="p-4 text-slate-600">${m.role || 'Seminarian'}</td>
                                 <td class="p-4 text-right">
-                                    <button onclick="deleteMember('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Revoke/Delete Member"><i class="fa-solid fa-trash"></i></button>
+                                    <button onclick="deleteMember('${m.email || m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Revoke Member"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>`;
                     }
@@ -718,15 +747,15 @@
             const membersList = Object.values(state.members);
             if (memberSelect) {
                 memberSelect.innerHTML = membersList.length
-                    ? membersList.map(m => `<option value="${m.id}">${m.name} (${m.id})</option>`).join('')
+                    ? membersList.map(m => `<option value="${m.email || m.id}">${m.name} (${m.email || m.id})</option>`).join('')
                     : '<option value="" disabled selected>No approved members found</option>';
             }
 
             const bookSelect = document.getElementById('borrow-book');
-            const availableBooks = Object.values(state.books).filter(b => b.available > 0);
+            const availableBooks = Object.values(state.books).filter(b => (b.availableCopies !== undefined ? b.availableCopies : (b.available || 1)) > 0);
             if (bookSelect) {
                 bookSelect.innerHTML = availableBooks.length
-                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Acc: ${b.accession || 'N/A'})</option>`).join('')
+                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Call #: ${b.callNumber || 'N/A'})</option>`).join('')
                     : '<option value="" disabled selected>No books available</option>';
             }
 
@@ -737,22 +766,23 @@
                 if (txs.length === 0) {
                     auditTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No borrowing history recorded.</td></tr>`;
                 } else {
-                    txs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     for (let tx of txs) {
-                        const member = state.members[tx.memberEmail.toLowerCase()] || { name: tx.memberEmail };
+                        const mKey = (tx.memberEmail || tx.memberId || '').toLowerCase();
+                        const member = state.members[mKey] || { name: mKey };
                         const book = state.books[tx.bookId] || { title: tx.bookId };
+                        const isReturned = tx.returned || tx.returnDate;
                         auditTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
-                                <td class="p-3 font-medium">${member.name}<br><span class="text-xs text-slate-400 font-mono">${tx.memberEmail}</span></td>
+                                <td class="p-3 font-medium">${member.name}<br><span class="text-xs text-slate-400 font-mono">${mKey}</span></td>
                                 <td class="p-3 text-slate-700">${book.title}</td>
-                                <td class="p-3 text-xs font-mono text-slate-500">${tx.timestamp}</td>
+                                <td class="p-3 text-xs font-mono text-slate-500">Out: ${tx.checkoutDate || tx.timestamp || '—'}<br>Due: ${tx.dueDate || '—'}</td>
                                 <td class="p-3">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${tx.returned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
-                                        ${tx.returned ? 'Returned' : 'Active Loan'}
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${isReturned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                                        ${isReturned ? 'Returned' : 'Active Loan'}
                                     </span>
                                 </td>
                                 <td class="p-3 text-right">
-                                    ${!tx.returned ? `<button onclick="returnBook('${tx.id}', '${tx.bookId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Mark Returned</button>` : `<span class="text-xs text-slate-400">${tx.returnTimestamp}</span>`}
+                                    ${!isReturned ? `<button onclick="returnBook('${tx.id}', '${tx.bookId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Mark Returned</button>` : `<span class="text-xs text-slate-400">${tx.returnDate || 'Returned'}</span>`}
                                 </td>
                             </tr>`;
                     }
@@ -763,24 +793,28 @@
             if (userHistoryTbody && currentUser) {
                 userHistoryTbody.innerHTML = '';
                 const myEmail = currentUser.email.toLowerCase();
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail.toLowerCase() === myEmail);
+                const myTxs = Object.values(state.transactions).filter(tx => {
+                    const mEmail = (tx.memberEmail || tx.memberId || '').toLowerCase();
+                    return mEmail === myEmail;
+                });
                 if (myTxs.length === 0) {
-                    userHistoryTbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">You have not borrowed any books yet.</td></tr>`;
+                    userHistoryTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">You have not borrowed any books yet.</td></tr>`;
                 } else {
-                    myTxs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     for (let tx of myTxs) {
                         const book = state.books[tx.bookId] || { title: tx.bookId };
+                        const isReturned = tx.returned || tx.returnDate;
                         userHistoryTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
                                 <td class="p-3 font-medium text-slate-900">${book.title}</td>
-                                <td class="p-3 text-xs font-mono text-slate-500">${tx.timestamp}</td>
+                                <td class="p-3 text-xs font-mono text-slate-500">${tx.checkoutDate || tx.timestamp || '—'}</td>
+                                <td class="p-3 text-xs font-mono text-slate-500">${tx.dueDate || '—'}</td>
                                 <td class="p-3">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${tx.returned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
-                                        ${tx.returned ? 'Returned' : 'Currently Borrowed'}
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${isReturned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                                        ${isReturned ? 'Returned' : 'Currently Borrowed'}
                                     </span>
                                 </td>
                                 <td class="p-3 text-right text-xs font-mono text-slate-500">
-                                    ${tx.returned ? tx.returnTimestamp : '—'}
+                                    ${isReturned ? (tx.returnDate || 'Returned') : '—'}
                                 </td>
                             </tr>`;
                     }
@@ -805,17 +839,11 @@
             const emailLower = currentUser.email.toLowerCase();
 
             try {
-                state.pendingMembers[emailLower] = { email: emailLower, name, age, formation, address };
+                const regData = { email: emailLower, name, age, formation, address, role: formation, timestamp: new Date().toLocaleString() };
+                state.pendingMembers[emailLower] = regData;
                 evaluateUserAccess();
 
-                await setDoc(doc(db, "pendingMembers", emailLower), {
-                    email: emailLower,
-                    name,
-                    age,
-                    formation,
-                    address,
-                    timestamp: new Date().toLocaleString()
-                });
+                await setDoc(doc(db, "pendingMembers", emailLower), regData);
             } catch (error) {
                 alert("Registration failed: " + error.message);
             }
@@ -828,17 +856,19 @@
             if (!pendingData) return;
 
             try {
-                state.members[emailLower] = { id: emailLower, ...pendingData };
+                const approvedData = {
+                    id: "m-" + Date.now(),
+                    email: emailLower,
+                    name: pendingData.name,
+                    role: pendingData.formation || pendingData.role || "Seminarian",
+                    memberNumber: "LWCS-2026-" + Math.floor(100 + Math.random() * 900),
+                    address: pendingData.address
+                };
+                state.members[emailLower] = approvedData;
                 delete state.pendingMembers[emailLower];
                 renderMembers();
 
-                await setDoc(doc(db, "members", emailLower), {
-                    id: emailLower,
-                    name: pendingData.name,
-                    age: pendingData.age,
-                    formation: pendingData.formation,
-                    address: pendingData.address
-                });
+                await setDoc(doc(db, "members", emailLower), approvedData);
                 await deleteDoc(doc(db, "pendingMembers", emailLower));
             } catch (error) {
                 alert("Acceptance failed: " + error.message);
@@ -864,38 +894,29 @@
         window.handleAddBook = async function (e) {
             e.preventDefault();
             if (!isAdmin) return;
-            const id = document.getElementById('new-book-id').value.trim();
-            const accession = document.getElementById('new-book-accession').value.trim();
+            const id = "b-" + Date.now();
+            const callNumber = document.getElementById('new-book-callNumber').value.trim();
+            const category = document.getElementById('new-book-category').value.trim();
             const title = document.getElementById('new-book-title').value.trim();
             const author = document.getElementById('new-book-author').value.trim();
             const year = document.getElementById('new-book-year').value.trim();
-            const edition = document.getElementById('new-book-edition').value.trim();
-            const volume = document.getElementById('new-book-volume').value.trim();
             const location = document.getElementById('new-book-location').value.trim();
-            const subject = document.getElementById('new-book-subject').value.trim();
-            const ddc = document.getElementById('new-book-ddc').value.trim();
             const copies = parseInt(document.getElementById('new-book-copies').value, 10);
 
             try {
                 const bookRef = doc(db, "books", id);
-                if (state.books[id]) {
-                    await updateDoc(bookRef, { total: increment(copies), available: increment(copies) });
-                } else {
-                    await setDoc(bookRef, {
-                        id,
-                        accession,
-                        title,
-                        author,
-                        year,
-                        edition,
-                        volume,
-                        location,
-                        subject,
-                        ddc,
-                        total: copies,
-                        available: copies
-                    });
-                }
+                const bookData = {
+                    id,
+                    callNumber,
+                    category,
+                    title,
+                    author,
+                    year,
+                    location,
+                    totalCopies: copies,
+                    availableCopies: copies
+                };
+                await setDoc(bookRef, bookData);
                 closeModal('book-modal');
                 e.target.reset();
             } catch (error) {
@@ -908,17 +929,23 @@
             if (!isAdmin) return;
             const memberEmail = document.getElementById('borrow-member').value;
             const bookId = document.getElementById('borrow-book').value;
-            const txId = "TX_" + Date.now();
-            const timestamp = new Date().toLocaleString();
+            const txId = "l-" + Date.now();
+            const checkoutDate = new Date().toISOString().split('T')[0];
+            const dueDate = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
 
             try {
-                await updateDoc(doc(db, "books", bookId), { available: increment(-1) });
+                const bookObj = state.books[bookId];
+                const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : (bookObj.available || 1);
+                
+                await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail - 1 });
                 await setDoc(doc(db, "transactions", txId), {
+                    id: txId,
                     memberEmail,
                     bookId,
-                    timestamp,
+                    checkoutDate,
+                    dueDate,
                     returned: false,
-                    returnTimestamp: null
+                    returnDate: null
                 });
                 e.target.reset();
             } catch (error) {
@@ -928,10 +955,15 @@
 
         window.returnBook = async function (txId, bookId) {
             if (!isAdmin) return;
-            const returnTimestamp = new Date().toLocaleString();
+            const returnDate = new Date().toISOString().split('T')[0];
             try {
-                await updateDoc(doc(db, "transactions", txId), { returned: true, returnTimestamp });
-                await updateDoc(doc(db, "books", bookId), { available: increment(1) });
+                await updateDoc(doc(db, "transactions", txId), { returned: true, returnDate });
+                const bookObj = state.books[bookId];
+                const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : (bookObj.available || 0);
+                const total = bookObj.totalCopies !== undefined ? bookObj.totalCopies : (bookObj.total || 1);
+                if (currentAvail < total) {
+                    await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail + 1 });
+                }
             } catch (error) {
                 alert("Return failed: " + error.message);
             }
@@ -946,10 +978,10 @@
             }
         };
 
-        window.deleteMember = async function (memberEmail) {
+        window.deleteMember = async function (memberKey) {
             if (!isAdmin) return;
             try {
-                await deleteDoc(doc(db, "members", memberEmail.toLowerCase()));
+                await deleteDoc(doc(db, "members", memberKey.toLowerCase()));
             } catch (error) {
                 alert("Delete failed: " + error.message);
             }
