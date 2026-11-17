@@ -42,10 +42,10 @@
                     </div>
                 </div>
 
-                <!-- Live Clock & User Profile Bar -->
-                <div class="flex items-center space-x-6">
-                    <div id="live-clock" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg border border-indigo-400/30 font-mono text-sm tracking-wider">
-                        00:00:00 AM
+                <!-- Live Clock, Date & User Profile Bar -->
+                <div class="flex items-center space-x-4">
+                    <div id="live-datetime" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg border border-indigo-400/30 font-mono text-xs tracking-wider text-center">
+                        Loading Date & Time...
                     </div>
                     
                     <div class="flex items-center space-x-3 bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500">
@@ -317,12 +317,16 @@
         let currentUser = null;
         let isAdmin = false;
 
-        // Live Clock Interval
+        // Live Real-Time Clock & Date Interval
         setInterval(() => {
             const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            const clockEl = document.getElementById('live-clock');
-            if (clockEl) clockEl.innerText = timeString;
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const dateStr = now.toLocaleDateString(undefined, options);
+            const timeStr = now.toLocaleTimeString();
+            const datetimeEl = document.getElementById('live-datetime');
+            if (datetimeEl) {
+                datetimeEl.innerHTML = `${dateStr}<br><span class="font-bold text-indigo-200">${timeStr}</span>`;
+            }
         }, 1000);
 
         window.loginWithGoogle = async function () {
