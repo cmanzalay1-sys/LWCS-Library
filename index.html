@@ -359,7 +359,8 @@
         };
 
         const ADMIN_EMAILS = [
-            "cmanzalay1@gmail.com"
+            "cmanzalay1@gmail.com",
+            "aldrianbastidacanoy@gmail.com"
         ];
 
         const app = initializeApp(firebaseConfig);
@@ -742,7 +743,6 @@
             const address = document.getElementById('self-reg-address').value.trim();
 
             try {
-                // Optimistic local update
                 state.pendingMembers[currentUser.email] = { email: currentUser.email, name, age, formation, address };
                 evaluateUserAccess();
 
@@ -765,7 +765,6 @@
             if (!pendingData) return;
 
             try {
-                // Optimistic local update for instant admin feedback
                 state.members[email] = { id: email, ...pendingData };
                 delete state.pendingMembers[email];
                 renderMembers();
