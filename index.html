@@ -18,15 +18,15 @@
                 <i class="fa-solid fa-book-open-reader text-3xl"></i>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">LWCS Library</h1>
-                    <p id="role-badge" class="text-xs text-indigo-200">Public Catalog View (Read-Only)</p>
+                    <p id="role-badge" class="text-xs text-indigo-200">Public Catalog View (Guest)</p>
                 </div>
             </div>
 
             <!-- Navigation Tabs -->
             <nav class="flex space-x-2">
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-700 transition">Catalog</button>
-                <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Members</button>
-                <button onclick="switchTab('transactions')" id="nav-transactions" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrow & Return</button>
+                <button onclick="switchTab('members')" id="nav-members" class="auth-required hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Members</button>
+                <button onclick="switchTab('transactions')" id="nav-transactions" class="auth-required hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrow & Return</button>
             </nav>
 
             <!-- Auth Area (Firebase Google Sign-In) -->
@@ -35,18 +35,18 @@
                 <div id="login-controls">
                     <button onclick="loginWithGoogle()" class="bg-white text-slate-700 hover:bg-slate-100 font-medium text-sm px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 transition">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-4 h-4">
-                        <span>Admin Sign in with Google</span>
+                        <span>Sign in with Google</span>
                     </button>
                 </div>
 
-                <!-- Logged In Admin View -->
+                <!-- Logged In User/Admin View -->
                 <div id="admin-profile" class="hidden flex items-center space-x-3 bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500">
-                    <img id="admin-avatar" src="" alt="Admin" class="w-7 h-7 rounded-full border border-white">
+                    <img id="admin-avatar" src="" alt="User" class="w-7 h-7 rounded-full border border-white">
                     <div class="text-left">
-                        <p id="admin-name" class="text-xs font-semibold leading-tight">Admin</p>
+                        <p id="admin-name" class="text-xs font-semibold leading-tight">User</p>
                         <p id="admin-email" class="text-[10px] text-indigo-200 leading-tight"></p>
                     </div>
-                    <button onclick="logoutAdmin()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 px-2.5 py-1 rounded text-white font-medium transition">
+                    <button onclick="logoutUser()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 px-2.5 py-1 rounded text-white font-medium transition">
                         Logout
                     </button>
                 </div>
@@ -97,7 +97,7 @@
                     </span>
                     <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search by title, author, or ID..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <button onclick="openModal('book-modal')" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
+                <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Add New Book
                 </button>
             </div>
@@ -111,7 +111,7 @@
                                 <th class="p-4">Title</th>
                                 <th class="p-4">Author</th>
                                 <th class="p-4">Available / Total</th>
-                                <th class="admin-only hidden p-4 text-right">Actions</th>
+                                <th id="book-actions-th" class="admin-only hidden p-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="book-table-body" class="divide-y divide-slate-200 text-sm">
@@ -124,11 +124,11 @@
             </div>
         </section>
 
-        <!-- TAB 2: MEMBERS SECTION (ADMIN ONLY) -->
+        <!-- TAB 2: MEMBERS SECTION (AUTH REQUIRED) -->
         <section id="tab-members" class="space-y-6 hidden">
             <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800">Library Members</h2>
-                <button onclick="openModal('member-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
+                <button onclick="openModal('member-modal')" id="register-member-btn" class="admin-only hidden bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-user-plus mr-2"></i>Register Member
                 </button>
             </div>
@@ -141,7 +141,7 @@
                                 <th class="p-4">Member ID</th>
                                 <th class="p-4">Name</th>
                                 <th class="p-4">Active Loans</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="admin-only hidden p-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="member-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
@@ -150,11 +150,11 @@
             </div>
         </section>
 
-        <!-- TAB 3: TRANSACTIONS SECTION (ADMIN ONLY) -->
+        <!-- TAB 3: TRANSACTIONS SECTION (AUTH REQUIRED) -->
         <section id="tab-transactions" class="space-y-6 hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Borrow Form -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <!-- Borrow Form (Admin Only) -->
+                <div id="borrow-form-container" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Borrow a Book</h3>
                     <form onsubmit="handleBorrow(event)" class="space-y-4">
                         <div>
@@ -165,12 +165,12 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">Select Book (In Stock)</label>
                             <select id="borrow-book" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required></select>
                         </div>
-                        <button type="submit" id="borrow-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition shadow-sm">Checkout Book</button>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition shadow-sm">Checkout Book</button>
                     </form>
                 </div>
 
                 <!-- Active Loans Table -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1" id="loans-card">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-rotate-left mr-2 text-emerald-600"></i>Active Loans & Returns</h3>
                     <div class="overflow-y-auto max-h-72">
                         <table class="w-full text-left text-sm">
@@ -178,7 +178,7 @@
                                 <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                                     <th class="p-3">Member</th>
                                     <th class="p-3">Book</th>
-                                    <th class="p-3 text-right">Action</th>
+                                    <th id="return-th" class="admin-only hidden p-3 text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="loans-table-body" class="divide-y divide-slate-200"></tbody>
@@ -190,7 +190,7 @@
 
     </main>
 
-    <!-- MODAL: ADD BOOK -->
+    <!-- MODAL: ADD BOOK (ADMIN ONLY) -->
     <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Book</h3>
@@ -219,7 +219,7 @@
         </div>
     </div>
 
-    <!-- MODAL: REGISTER MEMBER -->
+    <!-- MODAL: REGISTER MEMBER (ADMIN ONLY) -->
     <div id="member-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Register Member</h3>
@@ -246,7 +246,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCQy-Sl2T3Pzb7O4cdkN-p9q2qfvoqiTss",
             authDomain: "lwcs-library-33c85.firebaseapp.com",
@@ -257,24 +256,20 @@
             measurementId: "G-JWSVYC90KL"
         };
 
-        // Optional: Restrict Admin access to specific Google email addresses (e.g. ["you@gmail.com"]).
-        // Leave empty [] to allow any signed-in Google account to manage the library.
-        const ALLOWED_ADMIN_EMAILS = [];
+        // Configure your administrator emails here:
+        const ADMIN_EMAILS = [
+            "your-admin-email@gmail.com" // Replace with your actual Google email to give yourself Admin role
+        ];
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Live Application State (starts empty, synced from Firestore)
-        let state = {
-            books: {},
-            members: {}
-        };
-        let currentAdmin = null;
+        let state = { books: {}, members: {} };
+        let currentUser = null;
+        let isAdmin = false;
 
-        // --- FIREBASE AUTHENTICATION ---
         window.loginWithGoogle = async function () {
             try {
                 await signInWithPopup(auth, googleProvider);
@@ -284,7 +279,7 @@
             }
         };
 
-        window.logoutAdmin = async function () {
+        window.logoutUser = async function () {
             try {
                 await signOut(auth);
                 switchTab('catalog');
@@ -295,43 +290,54 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                if (ALLOWED_ADMIN_EMAILS.length > 0 && !ALLOWED_ADMIN_EMAILS.includes(user.email)) {
-                    alert("Access Denied: " + user.email + " is not an authorized admin.");
-                    signOut(auth);
-                    return;
-                }
-                currentAdmin = user;
+                currentUser = user;
+                // Check if user's email is in the ADMIN_EMAILS list, or if the list is empty (makes first logged-in user admin, or customize rule)
+                isAdmin = ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(user.email);
             } else {
-                currentAdmin = null;
+                currentUser = null;
+                isAdmin = false;
             }
             updateAuthUI();
             renderAll();
         });
 
         function updateAuthUI() {
-            const isAdmin = Boolean(currentAdmin);
+            const isLogged = Boolean(currentUser);
             const loginControls = document.getElementById('login-controls');
             const adminProfile = document.getElementById('admin-profile');
             const roleBadge = document.getElementById('role-badge');
-            const adminElements = document.querySelectorAll('.admin-only');
+            const authRequiredElements = document.querySelectorAll('.auth-required');
+            const adminOnlyElements = document.querySelectorAll('.admin-only');
 
-            if (isAdmin) {
+            if (isLogged) {
                 loginControls.classList.add('hidden');
                 adminProfile.classList.remove('hidden');
-                document.getElementById('admin-name').innerText = currentAdmin.displayName || 'Admin';
-                document.getElementById('admin-email').innerText = currentAdmin.email;
-                document.getElementById('admin-avatar').src = currentAdmin.photoURL || 'https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff';
-                roleBadge.innerText = 'Administrator Mode (Synced with Firebase)';
-                adminElements.forEach(el => el.classList.remove('hidden'));
+                document.getElementById('admin-name').innerText = currentUser.displayName || 'User';
+                document.getElementById('admin-email').innerText = currentUser.email;
+                document.getElementById('admin-avatar').src = currentUser.photoURL || 'https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff';
+                
+                if (isAdmin) {
+                    roleBadge.innerText = 'Role: Administrator (Full Access)';
+                    adminOnlyElements.forEach(el => el.classList.remove('hidden'));
+                    document.getElementById('borrow-form-container').style.display = 'block';
+                    document.getElementById('loans-card').className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1";
+                } else {
+                    roleBadge.innerText = 'Role: Standard User (View & Loans)';
+                    adminOnlyElements.forEach(el => el.classList.add('hidden'));
+                    document.getElementById('borrow-form-container').style.display = 'none';
+                    document.getElementById('loans-card').className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-2 col-span-2";
+                }
+                authRequiredElements.forEach(el => el.classList.remove('hidden'));
             } else {
                 loginControls.classList.remove('hidden');
                 adminProfile.classList.add('hidden');
-                roleBadge.innerText = 'Public Catalog View (Read-Only)';
-                adminElements.forEach(el => el.classList.add('hidden'));
+                roleBadge.innerText = 'Role: Public Guest (Read-Only)';
+                authRequiredElements.forEach(el => el.classList.add('hidden'));
+                adminOnlyElements.forEach(el => el.classList.add('hidden'));
             }
         }
 
-        // --- REAL-TIME FIRESTORE LISTENERS ---
+        // Firestore data listeners
         onSnapshot(collection(db, "books"), (snapshot) => {
             const booksData = {};
             snapshot.forEach((docSnap) => {
@@ -339,12 +345,6 @@
             });
             state.books = booksData;
             renderAll();
-        }, (error) => {
-            console.error("Error listening to books collection:", error);
-            document.getElementById('book-table-body').innerHTML = `
-                <tr><td colspan="5" class="p-8 text-center text-rose-500">
-                    Unable to load books. Check Firestore rules in your Firebase Console.
-                </td></tr>`;
         });
 
         onSnapshot(collection(db, "members"), (snapshot) => {
@@ -354,14 +354,11 @@
             });
             state.members = membersData;
             renderAll();
-        }, (error) => {
-            console.error("Error listening to members collection:", error);
         });
 
-        // --- NAVIGATION & MODALS ---
         window.switchTab = function (tabName) {
-            if ((tabName === 'members' || tabName === 'transactions') && !currentAdmin) {
-                alert('Please sign in with Google as an Admin to access this section.');
+            if ((tabName === 'members' || tabName === 'transactions') && !currentUser) {
+                alert('Please sign in with Google to access this section.');
                 return;
             }
             ['catalog', 'members', 'transactions'].forEach(t => {
@@ -374,7 +371,7 @@
         };
 
         window.openModal = function (modalId) {
-            if (!currentAdmin) return;
+            if (!isAdmin) return;
             document.getElementById(modalId).classList.remove('hidden');
         };
 
@@ -382,7 +379,6 @@
             document.getElementById(modalId).classList.add('hidden');
         };
 
-        // --- RENDER FUNCTIONS ---
         function renderStats() {
             const totalBooks = Object.values(state.books).reduce((acc, b) => acc + (b.total || 0), 0);
             const totalMembers = Object.keys(state.members).length;
@@ -396,7 +392,6 @@
         window.renderCatalog = function () {
             const query = document.getElementById('search-input').value.toLowerCase();
             const tbody = document.getElementById('book-table-body');
-            const isAdmin = Boolean(currentAdmin);
             tbody.innerHTML = '';
 
             const booksList = Object.values(state.books).filter(book =>
@@ -406,12 +401,7 @@
             );
 
             if (booksList.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="${isAdmin ? 5 : 4}" class="p-8 text-center text-slate-400">
-                            No books in the catalog yet. ${isAdmin ? 'Click "Add New Book" to get started.' : 'Sign in as Admin to add books.'}
-                        </td>
-                    </tr>`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 5 : 4}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
                 return;
             }
 
@@ -437,15 +427,10 @@
         function renderMembers() {
             const tbody = document.getElementById('member-table-body');
             tbody.innerHTML = '';
-
             const membersList = Object.values(state.members);
+
             if (membersList.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="p-8 text-center text-slate-400">
-                            No registered members yet. Click "Register Member" to add one.
-                        </td>
-                    </tr>`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 4 : 3}" class="p-8 text-center text-slate-400">No registered members found.</td></tr>`;
                 return;
             }
 
@@ -456,9 +441,10 @@
                         <td class="p-4 font-mono text-xs text-slate-500">${member.id}</td>
                         <td class="p-4 font-medium text-slate-900">${member.name}</td>
                         <td class="p-4 text-slate-600">${loanCount} active books</td>
+                        ${isAdmin ? `
                         <td class="p-4 text-right">
                             <button onclick="deleteMember('${member.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Member"><i class="fa-solid fa-trash"></i></button>
-                        </td>
+                        </td>` : ''}
                     </tr>`;
             }
         }
@@ -466,15 +452,19 @@
         function renderTransactions() {
             const memberSelect = document.getElementById('borrow-member');
             const membersList = Object.values(state.members);
-            memberSelect.innerHTML = membersList.length
-                ? membersList.map(m => `<option value="${m.id}">${m.name} (${m.id})</option>`).join('')
-                : '<option value="" disabled selected>No members registered</option>';
+            if (memberSelect) {
+                memberSelect.innerHTML = membersList.length
+                    ? membersList.map(m => `<option value="${m.id}">${m.name} (${m.id})</option>`).join('')
+                    : '<option value="" disabled selected>No members registered</option>';
+            }
 
             const bookSelect = document.getElementById('borrow-book');
             const availableBooks = Object.values(state.books).filter(b => b.available > 0);
-            bookSelect.innerHTML = availableBooks.length
-                ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Available: ${b.available})</option>`).join('')
-                : '<option value="" disabled selected>No books available</option>';
+            if (bookSelect) {
+                bookSelect.innerHTML = availableBooks.length
+                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Available: ${b.available})</option>`).join('')
+                    : '<option value="" disabled selected>No books available</option>';
+            }
 
             const loansTbody = document.getElementById('loans-table-body');
             loansTbody.innerHTML = '';
@@ -488,15 +478,16 @@
                         <tr class="hover:bg-slate-50">
                             <td class="p-3 font-medium">${member.name}</td>
                             <td class="p-3 text-slate-600">${book ? book.title : bookId}</td>
+                            ${isAdmin ? `
                             <td class="p-3 text-right">
                                 <button onclick="returnBook('${member.id}', '${bookId}')" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-3 py-1 rounded text-xs font-semibold transition">Return</button>
-                            </td>
+                            </td>` : ''}
                         </tr>`;
                 }
             }
 
             if (!hasLoans) {
-                loansTbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No active loans right now.</td></tr>`;
+                loansTbody.innerHTML = `<tr><td colspan="${isAdmin ? 3 : 2}" class="p-4 text-center text-slate-400">No active loans right now.</td></tr>`;
             }
         }
 
@@ -507,11 +498,10 @@
             renderTransactions();
         }
 
-        // --- FIRESTORE CRUD OPERATIONS ---
+        // CRUD Actions (Admin Protected)
         window.handleAddBook = async function (e) {
             e.preventDefault();
-            if (!currentAdmin) return;
-
+            if (!isAdmin) return alert("Unauthorized");
             const id = document.getElementById('new-book-id').value.trim();
             const title = document.getElementById('new-book-title').value.trim();
             const author = document.getElementById('new-book-author').value.trim();
@@ -520,132 +510,68 @@
             try {
                 const bookRef = doc(db, "books", id);
                 if (state.books[id]) {
-                    await updateDoc(bookRef, {
-                        total: increment(copies),
-                        available: increment(copies)
-                    });
+                    await updateDoc(bookRef, { total: increment(copies), available: increment(copies) });
                 } else {
-                    await setDoc(bookRef, {
-                        title,
-                        author,
-                        total: copies,
-                        available: copies
-                    });
+                    await setDoc(bookRef, { title, author, total: copies, available: copies });
                 }
                 closeModal('book-modal');
                 e.target.reset();
             } catch (error) {
-                console.error("Error adding book:", error);
                 alert("Failed to save book: " + error.message);
             }
         };
 
         window.handleAddMember = async function (e) {
             e.preventDefault();
-            if (!currentAdmin) return;
-
+            if (!isAdmin) return alert("Unauthorized");
             const id = document.getElementById('new-member-id').value.trim();
             const name = document.getElementById('new-member-name').value.trim();
-
-            if (state.members[id]) {
-                alert('Member ID already exists!');
-                return;
-            }
-
             try {
-                await setDoc(doc(db, "members", id), {
-                    name,
-                    loans: []
-                });
+                await setDoc(doc(db, "members", id), { name, loans: [] });
                 closeModal('member-modal');
                 e.target.reset();
             } catch (error) {
-                console.error("Error adding member:", error);
                 alert("Failed to register member: " + error.message);
             }
         };
 
         window.handleBorrow = async function (e) {
             e.preventDefault();
-            if (!currentAdmin) return;
-
+            if (!isAdmin) return alert("Unauthorized");
             const memberId = document.getElementById('borrow-member').value;
             const bookId = document.getElementById('borrow-book').value;
-
-            if (!state.members[memberId] || !state.books[bookId]) {
-                alert('Please select a valid member and book.');
-                return;
-            }
-            if (state.books[bookId].available <= 0) {
-                alert('Book is out of stock!');
-                return;
-            }
-            if ((state.members[memberId].loans || []).includes(bookId)) {
-                alert('This member already has a copy of this book checked out.');
-                return;
-            }
-
             try {
-                await updateDoc(doc(db, "books", bookId), {
-                    available: increment(-1)
-                });
-                await updateDoc(doc(db, "members", memberId), {
-                    loans: arrayUnion(bookId)
-                });
+                await updateDoc(doc(db, "books", bookId), { available: increment(-1) });
+                await updateDoc(doc(db, "members", memberId), { loans: arrayUnion(bookId) });
             } catch (error) {
-                console.error("Error processing checkout:", error);
                 alert("Checkout failed: " + error.message);
             }
         };
 
         window.returnBook = async function (memberId, bookId) {
-            if (!currentAdmin) return;
-
+            if (!isAdmin) return alert("Unauthorized");
             try {
-                await updateDoc(doc(db, "members", memberId), {
-                    loans: arrayRemove(bookId)
-                });
-                if (state.books[bookId]) {
-                    await updateDoc(doc(db, "books", bookId), {
-                        available: increment(1)
-                    });
-                }
+                await updateDoc(doc(db, "members", memberId), { loans: arrayRemove(bookId) });
+                await updateDoc(doc(db, "books", bookId), { available: increment(1) });
             } catch (error) {
-                console.error("Error returning book:", error);
                 alert("Return failed: " + error.message);
             }
         };
 
         window.deleteBook = async function (bookId) {
-            if (!currentAdmin) return;
-
-            for (let member of Object.values(state.members)) {
-                if ((member.loans || []).includes(bookId)) {
-                    alert('Cannot delete book while it is actively checked out.');
-                    return;
-                }
-            }
-
+            if (!isAdmin) return alert("Unauthorized");
             try {
                 await deleteDoc(doc(db, "books", bookId));
             } catch (error) {
-                console.error("Error deleting book:", error);
                 alert("Delete failed: " + error.message);
             }
         };
 
         window.deleteMember = async function (memberId) {
-            if (!currentAdmin) return;
-
-            if ((state.members[memberId].loans || []).length > 0) {
-                alert('Cannot delete member with active book loans.');
-                return;
-            }
-
+            if (!isAdmin) return alert("Unauthorized");
             try {
                 await deleteDoc(doc(db, "members", memberId));
             } catch (error) {
-                console.error("Error deleting member:", error);
                 alert("Delete failed: " + error.message);
             }
         };
