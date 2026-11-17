@@ -74,10 +74,10 @@
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
             <h2 class="text-xl font-bold text-white">Registration Pending</h2>
-            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Your screen will automatically refresh once approved!</p>
-            <div class="animate-pulse flex justify-center items-center space-x-2 text-xs text-indigo-400 pt-2">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                <span>Listening for admin approval...</span>
+            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Your dashboard will load instantly upon approval!</p>
+            <div class="flex justify-center items-center space-x-2 text-xs text-indigo-400 pt-2">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Instant live sync active...</span>
             </div>
             <button onclick="logoutUser()" class="mt-4 text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
         </div>
@@ -390,7 +390,7 @@
             renderAll();
             setTimeout(() => {
                 if (icon) icon.classList.remove('fa-spin');
-            }, 600);
+            }, 400);
         };
 
         window.loginWithGoogle = async function () {
@@ -480,18 +480,16 @@
                 userOnlyElements.forEach(el => el.classList.add('hidden'));
                 document.getElementById('stat-card-2-label').innerText = "Approved Members";
                 document.getElementById('stat-card-3-label').innerText = "Active Loans";
-                switchTab('catalog');
             } else {
                 roleBadge.innerText = `Role: Standard Member (${currentUser.email})`;
                 adminOnlyElements.forEach(el => el.classList.add('hidden'));
                 userOnlyElements.forEach(el => el.classList.remove('hidden'));
                 document.getElementById('stat-card-2-label').innerText = "My Borrowed Total";
                 document.getElementById('stat-card-3-label').innerText = "My Active Loans";
-                switchTab('catalog');
             }
         }
 
-        // Real-time Firestore Listeners that instantly push state changes to logged-in users
+        // Instant Zero-Delay Firestore Listeners
         onSnapshot(collection(db, "books"), (snapshot) => {
             state.books = {};
             snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
@@ -744,6 +742,10 @@
             const address = document.getElementById('self-reg-address').value.trim();
 
             try {
+                // Optimistic local update
+                state.pendingMembers[currentUser.email] = { email: currentUser.email, name, age, formation, address };
+                evaluateUserAccess();
+
                 await setDoc(doc(db, "pendingMembers", currentUser.email), {
                     email: currentUser.email,
                     name,
@@ -752,8 +754,6 @@
                     address,
                     timestamp: new Date().toLocaleString()
                 });
-                document.getElementById('registration-gateway').classList.add('hidden');
-                document.getElementById('pending-gateway').classList.remove('hidden');
             } catch (error) {
                 alert("Registration failed: " + error.message);
             }
@@ -765,6 +765,11 @@
             if (!pendingData) return;
 
             try {
+                // Optimistic local update for instant admin feedback
+                state.members[email] = { id: email, ...pendingData };
+                delete state.pendingMembers[email];
+                renderMembers();
+
                 await setDoc(doc(db, "members", email), {
                     id: email,
                     name: pendingData.name,
@@ -782,6 +787,10 @@
             if (!isAdmin) return;
             try {
                 const pendingData = state.pendingMembers[email] || { email };
+                state.refusedMembers[email] = pendingData;
+                delete state.pendingMembers[email];
+                renderMembers();
+
                 await setDoc(doc(db, "refusedMembers", email), pendingData);
                 await deleteDoc(doc(db, "pendingMembers", email));
             } catch (error) {
