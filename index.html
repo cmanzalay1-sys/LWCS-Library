@@ -36,7 +36,7 @@
                     <i class="fa-solid fa-user-pen"></i>
                 </div>
                 <h2 class="text-xl font-bold text-white">Complete Your Membership</h2>
-                <p class="text-xs text-slate-400 mt-1">Please provide your details to request library access. An admin will review and approve your account.</p>
+                <p class="text-xs text-slate-400 mt-1">Please provide your details to request library access. An admin will review and confirm your membership.</p>
             </div>
             <form onsubmit="handleUserSelfRegister(event)" class="space-y-3">
                 <div>
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <!-- PENDING APPROVAL GATEWAY (Shown if user is registered but not approved yet) -->
+    <!-- PENDING APPROVAL GATEWAY -->
     <div id="pending-gateway" class="hidden flex-grow flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-4">
             <div class="w-14 h-14 bg-amber-600/20 text-amber-400 rounded-xl flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
@@ -76,6 +76,18 @@
             <h2 class="text-xl font-bold text-white">Registration Pending</h2>
             <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Please check back later.</p>
             <button onclick="logoutUser()" class="mt-4 text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- REJECTED / REFUSED GATEWAY -->
+    <div id="rejected-gateway" class="hidden flex-grow flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-4">
+            <div class="w-14 h-14 bg-rose-600/20 text-rose-400 rounded-xl flex items-center justify-center text-2xl mx-auto border border-rose-500/30">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <h2 class="text-xl font-bold text-white">Membership Refused</h2>
+            <p class="text-sm text-slate-400">We are sorry, but your membership registration was refused by the library administrator.</p>
+            <button onclick="logoutUser()" class="mt-4 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">Sign Out / Try Another Account</button>
         </div>
     </div>
 
@@ -347,7 +359,7 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, pendingMembers: {}, transactions: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
         let currentUser = null;
         let isAdmin = false;
 
@@ -384,11 +396,13 @@
             const loginGateway = document.getElementById('login-gateway');
             const regGateway = document.getElementById('registration-gateway');
             const pendingGateway = document.getElementById('pending-gateway');
+            const rejectedGateway = document.getElementById('rejected-gateway');
             const appContainer = document.getElementById('app-container');
 
             loginGateway.classList.add('hidden');
             regGateway.classList.add('hidden');
             pendingGateway.classList.add('hidden');
+            rejectedGateway.classList.add('hidden');
             appContainer.classList.add('hidden');
 
             if (user) {
@@ -400,14 +414,16 @@
                     updateAuthUI();
                     renderAll();
                 } else {
-                    // Check if member is approved or pending
                     const isApproved = state.members[user.email];
                     const isPending = state.pendingMembers[user.email];
+                    const isRefused = state.refusedMembers[user.email];
 
                     if (isApproved) {
                         appContainer.classList.remove('hidden');
                         updateAuthUI();
                         renderAll();
+                    } else if (isRefused) {
+                        rejectedGateway.classList.remove('hidden');
                     } else if (isPending) {
                         pendingGateway.classList.remove('hidden');
                     } else {
@@ -462,6 +478,7 @@
             if (currentUser && !isAdmin) {
                 if (membersData[currentUser.email]) {
                     document.getElementById('pending-gateway').classList.add('hidden');
+                    document.getElementById('rejected-gateway').classList.add('hidden');
                     document.getElementById('app-container').classList.remove('hidden');
                     updateAuthUI();
                 }
@@ -474,9 +491,24 @@
             snapshot.forEach((docSnap) => { pendingData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             state.pendingMembers = pendingData;
             if (currentUser && !isAdmin) {
-                if (!state.members[currentUser.email] && pendingData[currentUser.email]) {
+                if (!state.members[currentUser.email] && !state.refusedMembers[currentUser.email] && pendingData[currentUser.email]) {
                     document.getElementById('app-container').classList.add('hidden');
                     document.getElementById('pending-gateway').classList.remove('hidden');
+                }
+            }
+            renderAll();
+        });
+
+        onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
+            const refusedData = {};
+            snapshot.forEach((docSnap) => { refusedData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            state.refusedMembers = refusedData;
+            if (currentUser && !isAdmin) {
+                if (refusedData[currentUser.email]) {
+                    document.getElementById('app-container').classList.add('hidden');
+                    document.getElementById('pending-gateway').classList.add('hidden');
+                    document.getElementById('registration-gateway').classList.add('hidden');
+                    document.getElementById('rejected-gateway').classList.remove('hidden');
                 }
             }
             renderAll();
@@ -563,7 +595,6 @@
         };
 
         function renderMembers() {
-            // Render Pending Approvals
             const approvalsTbody = document.getElementById('approvals-table-body');
             if (approvalsTbody) {
                 approvalsTbody.innerHTML = '';
@@ -580,15 +611,14 @@
                                 <td class="p-4 text-slate-600">${p.address}</td>
                                 <td class="p-4 text-slate-600">${p.formation}</td>
                                 <td class="p-4 text-right space-x-2">
-                                    <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Approve</button>
-                                    <button onclick="rejectMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Reject</button>
+                                    <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Accept</button>
+                                    <button onclick="refuseMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Refuse</button>
                                 </td>
                             </tr>`;
                     }
                 }
             }
 
-            // Render Approved Members
             const tbody = document.getElementById('member-table-body');
             if (tbody) {
                 tbody.innerHTML = '';
@@ -694,7 +724,6 @@
             renderTransactions();
         }
 
-        // User Self-Registration Action
         window.handleUserSelfRegister = async function (e) {
             e.preventDefault();
             if (!currentUser) return;
@@ -719,7 +748,6 @@
             }
         };
 
-        // Admin Approval Actions
         window.approveMember = async function (email) {
             if (!isAdmin) return;
             const pendingData = state.pendingMembers[email];
@@ -727,6 +755,7 @@
 
             try {
                 await setDoc(doc(db, "members", email), {
+                    id: email,
                     name: pendingData.name,
                     age: pendingData.age,
                     formation: pendingData.formation,
@@ -734,20 +763,22 @@
                 });
                 await deleteDoc(doc(db, "pendingMembers", email));
             } catch (error) {
-                alert("Approval failed: " + error.message);
+                alert("Acceptance failed: " + error.message);
             }
         };
 
-        window.rejectMember = async function (email) {
+        window.refuseMember = async function (email) {
             if (!isAdmin) return;
             try {
+                // Move from pending to refused collection so user is notified
+                const pendingData = state.pendingMembers[email] || { email };
+                await setDoc(doc(db, "refusedMembers", email), pendingData);
                 await deleteDoc(doc(db, "pendingMembers", email));
             } catch (error) {
-                alert("Rejection failed: " + error.message);
+                alert("Refusal failed: " + error.message);
             }
         };
 
-        // Standard CRUD Actions
         window.handleAddBook = async function (e) {
             e.preventDefault();
             if (!isAdmin) return;
