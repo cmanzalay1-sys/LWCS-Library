@@ -405,7 +405,9 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
+        function evaluateUserAccess() {
+            if (!currentUser) return;
+            
             const loginGateway = document.getElementById('login-gateway');
             const regGateway = document.getElementById('registration-gateway');
             const pendingGateway = document.getElementById('pending-gateway');
@@ -418,35 +420,43 @@
             rejectedGateway.classList.add('hidden');
             appContainer.classList.add('hidden');
 
+            if (isAdmin) {
+                appContainer.classList.remove('hidden');
+                updateAuthUI();
+                renderAll();
+                return;
+            }
+
+            const isApproved = state.members[currentUser.email];
+            const isPending = state.pendingMembers[currentUser.email];
+            const isRefused = state.refusedMembers[currentUser.email];
+
+            if (isApproved) {
+                appContainer.classList.remove('hidden');
+                updateAuthUI();
+                renderAll();
+            } else if (isRefused) {
+                rejectedGateway.classList.remove('hidden');
+            } else if (isPending) {
+                pendingGateway.classList.remove('hidden');
+            } else {
+                regGateway.classList.remove('hidden');
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 isAdmin = ADMIN_EMAILS.includes(user.email);
-
-                if (isAdmin) {
-                    appContainer.classList.remove('hidden');
-                    updateAuthUI();
-                    renderAll();
-                } else {
-                    const isApproved = state.members[user.email];
-                    const isPending = state.pendingMembers[user.email];
-                    const isRefused = state.refusedMembers[user.email];
-
-                    if (isApproved) {
-                        appContainer.classList.remove('hidden');
-                        updateAuthUI();
-                        renderAll();
-                    } else if (isRefused) {
-                        rejectedGateway.classList.remove('hidden');
-                    } else if (isPending) {
-                        pendingGateway.classList.remove('hidden');
-                    } else {
-                        regGateway.classList.remove('hidden');
-                    }
-                }
+                evaluateUserAccess();
             } else {
                 currentUser = null;
                 isAdmin = false;
-                loginGateway.classList.remove('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('registration-gateway').classList.add('hidden');
+                document.getElementById('pending-gateway').classList.add('hidden');
+                document.getElementById('rejected-gateway').classList.add('hidden');
+                document.getElementById('login-gateway').classList.remove('hidden');
             }
         });
 
@@ -486,36 +496,21 @@
         onSnapshot(collection(db, "members"), (snapshot) => {
             state.members = {};
             snapshot.forEach((docSnap) => { state.members[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            if (currentUser && !isAdmin && state.members[currentUser.email]) {
-                document.getElementById('pending-gateway').classList.add('hidden');
-                document.getElementById('rejected-gateway').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                updateAuthUI();
-            }
+            evaluateUserAccess();
             renderAll();
         });
 
         onSnapshot(collection(db, "pendingMembers"), (snapshot) => {
             state.pendingMembers = {};
             snapshot.forEach((docSnap) => { state.pendingMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            if (currentUser && !isAdmin) {
-                if (!state.members[currentUser.email] && !state.refusedMembers[currentUser.email] && state.pendingMembers[currentUser.email]) {
-                    document.getElementById('app-container').classList.add('hidden');
-                    document.getElementById('pending-gateway').classList.remove('hidden');
-                }
-            }
+            evaluateUserAccess();
             renderAll();
         });
 
         onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
             state.refusedMembers = {};
             snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
-            if (currentUser && !isAdmin && state.refusedMembers[currentUser.email]) {
-                document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('pending-gateway').classList.add('hidden');
-                document.getElementById('registration-gateway').classList.add('hidden');
-                document.getElementById('rejected-gateway').classList.remove('hidden');
-            }
+            evaluateUserAccess();
             renderAll();
         });
 
@@ -558,8 +553,8 @@
                 const activeLoans = Object.values(state.transactions).filter(tx => !tx.returned).length;
                 const statLoans = document.getElementById('stat-loans');
                 if (statLoans) statLoans.innerText = activeLoans;
-            } else {
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser?.email);
+            } else if (currentUser) {
+                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser.email);
                 const myActive = myTxs.filter(tx => !tx.returned).length;
                 const statMembers = document.getElementById('stat-members');
                 if (statMembers) statMembers.innerText = myTxs.length;
