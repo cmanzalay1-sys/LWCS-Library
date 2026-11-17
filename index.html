@@ -11,14 +11,14 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- LOGIN GATEWAY CONTAINER (Shown when logged out) -->
+    <!-- LOGIN GATEWAY CONTAINER -->
     <div id="login-gateway" class="flex-grow flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-6">
             <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-indigo-500/30">
                 <i class="fa-solid fa-book-open-reader"></i>
             </div>
             <div>
-                <h1 id="library-title-banner" class="text-2xl font-bold tracking-tight text-white">LWCS Library Portal</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-white">LWCS Library Portal</h1>
                 <p class="text-sm text-slate-400 mt-2">Sign in with your Google account to access your library dashboard or admin controls.</p>
             </div>
             <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-800 font-medium py-3 px-4 rounded-xl shadow-md flex items-center justify-center space-x-3 transition transform active:scale-[0.98]">
@@ -36,7 +36,7 @@
                     <i class="fa-solid fa-user-pen"></i>
                 </div>
                 <h2 class="text-xl font-bold text-white">Complete Your Membership</h2>
-                <p class="text-xs text-slate-400 mt-1">Please provide your details to request library access. An admin will review and confirm your membership.</p>
+                <p class="text-xs text-slate-400 mt-1">Please provide your details to request library access.</p>
             </div>
             <form onsubmit="handleUserSelfRegister(event)" class="space-y-3">
                 <div>
@@ -50,19 +50,19 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Formation Level</label>
-                        <input type="text" id="self-reg-formation" placeholder="e.g. Seminarian / Year 3" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                        <input type="text" id="self-reg-formation" placeholder="e.g. Seminarian" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Address</label>
-                    <input type="text" id="self-reg-address" placeholder="Sitio Mojon, Binicuil" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                    <input type="text" id="self-reg-address" placeholder="Kabankalan City" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-md mt-2">
-                    Submit Registration for Approval
+                    Submit Registration
                 </button>
             </form>
             <div class="text-center pt-2">
-                <button onclick="logoutUser()" class="text-xs text-slate-400 hover:text-white underline">Sign out / Switch account</button>
+                <button onclick="logoutUser()" class="text-xs text-slate-400 hover:text-white underline">Sign out</button>
             </div>
         </div>
     </div>
@@ -74,28 +74,23 @@
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
             <h2 class="text-xl font-bold text-white">Registration Pending</h2>
-            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Your dashboard will load instantly upon approval!</p>
-            <div class="flex justify-center items-center space-x-2 text-xs text-indigo-400 pt-2">
-                <i class="fa-solid fa-circle-notch fa-spin"></i>
-                <span>Instant live sync active...</span>
-            </div>
+            <p class="text-sm text-slate-400">Your membership registration is awaiting admin confirmation.</p>
             <button onclick="logoutUser()" class="mt-4 text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
         </div>
     </div>
 
-    <!-- REJECTED / REFUSED GATEWAY -->
+    <!-- REJECTED GATEWAY -->
     <div id="rejected-gateway" class="hidden flex-grow flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-4">
             <div class="w-14 h-14 bg-rose-600/20 text-rose-400 rounded-xl flex items-center justify-center text-2xl mx-auto border border-rose-500/30">
                 <i class="fa-solid fa-ban"></i>
             </div>
             <h2 class="text-xl font-bold text-white">Membership Refused</h2>
-            <p class="text-sm text-slate-400">We are sorry, but your membership registration was refused by the library administrator.</p>
-            <button onclick="logoutUser()" class="mt-4 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">Sign Out / Try Another Account</button>
+            <button onclick="logoutUser()" class="mt-4 text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER (Hidden until approved / admin) -->
+    <!-- MAIN APP CONTAINER -->
     <div id="app-container" class="hidden w-full max-w-7xl mx-auto p-4 md:p-6 space-y-6 flex-grow">
         
         <!-- Header Navigation -->
@@ -104,85 +99,69 @@
                 <div class="flex items-center space-x-3">
                     <i class="fa-solid fa-book-open-reader text-3xl"></i>
                     <div>
-                        <h1 id="app-header-title" class="text-2xl font-bold tracking-tight">LWCS Library</h1>
+                        <h1 class="text-2xl font-bold tracking-tight">LWCS Library Portal</h1>
                         <p id="role-badge" class="text-xs text-indigo-200">Role: Loading...</p>
                     </div>
                 </div>
 
-                <!-- Live Clock, Date, Refresh Button & User Profile Bar -->
                 <div class="flex items-center space-x-3">
-                    <button onclick="manualRefresh()" title="Refresh Data" class="bg-indigo-700 hover:bg-indigo-800 text-indigo-100 p-2.5 rounded-lg border border-indigo-500 transition flex items-center justify-center">
+                    <button onclick="manualRefresh()" title="Refresh Data" class="bg-indigo-700 hover:bg-indigo-800 text-indigo-100 p-2.5 rounded-lg border border-indigo-500 transition">
                         <i id="refresh-icon" class="fa-solid fa-rotate"></i>
                     </button>
-
-                    <div id="live-datetime" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg border border-indigo-400/30 font-mono text-xs tracking-wider text-center">
-                        Loading Date & Time...
-                    </div>
-                    
+                    <div id="live-datetime" class="bg-indigo-900/60 px-3 py-1.5 rounded-lg border border-indigo-400/30 font-mono text-xs text-center">Loading...</div>
                     <div class="flex items-center space-x-3 bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500">
                         <img id="user-avatar" src="" alt="User" class="w-7 h-7 rounded-full border border-white">
                         <div class="text-left">
                             <p id="user-name" class="text-xs font-semibold leading-tight">User</p>
                             <p id="user-email" class="text-[10px] text-indigo-200 leading-tight"></p>
                         </div>
-                        <button onclick="logoutUser()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 px-2.5 py-1 rounded text-white font-medium transition">
-                            Logout
-                        </button>
+                        <button onclick="logoutUser()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 px-2 py-1 rounded text-white font-medium">Logout</button>
                     </div>
                 </div>
             </div>
             
-            <!-- Navigation Tabs -->
             <nav class="px-6 pb-4 flex flex-wrap gap-2 border-t border-indigo-500/40 pt-3">
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition text-sm">Catalog</button>
                 <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">My Borrowed Books</button>
                 <button onclick="switchTab('approvals')" id="nav-approvals" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Member Approvals</button>
                 <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Approved Members</button>
-                <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Admin Audit & History</button>
+                <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Loans & Checkout</button>
             </nav>
         </header>
 
-        <!-- STATS DASHBOARD CARDS -->
+        <!-- STATS CARDS -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total Books Available</p>
+                    <p class="text-sm font-medium text-slate-500">Total Books in Catalog</p>
                     <h3 id="stat-books" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
                 </div>
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-book"></i>
-                </div>
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-book"></i></div>
             </div>
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-slate-500" id="stat-card-2-label">Registered Members</p>
+                    <p class="text-sm font-medium text-slate-500" id="stat-card-2-label">Members</p>
                     <h3 id="stat-members" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
                 </div>
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-users"></i>
-                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
             </div>
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500" id="stat-card-3-label">Active Loans</p>
                     <h3 id="stat-loans" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
                 </div>
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-hand-holding-hand"></i>
-                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xl"><i class="fa-solid fa-hand-holding-hand"></i></div>
             </div>
         </div>
 
-        <!-- TAB 1: CATALOG SECTION -->
+        <!-- TAB 1: CATALOG -->
         <section id="tab-catalog" class="space-y-6">
             <div class="flex flex-col md:flex-row justify-between gap-4 items-center bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="relative w-full md:w-96">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-search"></i>
-                    </span>
-                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search by title, author, accession #, Dewey, subject, shelf..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-search"></i></span>
+                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search title, author, accession, subject..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
-                <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
+                <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Add New Book
                 </button>
             </div>
@@ -192,13 +171,13 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-3">Accession # / Dewey</th>
-                                <th class="p-3">Title & Author</th>
-                                <th class="p-3">Subject / Category</th>
-                                <th class="p-3">Edition / Vol / Year</th>
-                                <th class="p-3">Shelf-Row Location</th>
-                                <th class="p-3">Stock</th>
-                                <th id="book-actions-th" class="admin-only hidden p-3 text-right">Actions</th>
+                                <th class="p-3">Accession # / Subject #</th>
+                                <th class="p-3">Title & Author(s)</th>
+                                <th class="p-3">Categories</th>
+                                <th class="p-3">Ed / Vol / Year</th>
+                                <th class="p-3">Shelf Location</th>
+                                <th class="p-3">Copies</th>
+                                <th class="admin-only hidden p-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="book-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
@@ -207,7 +186,7 @@
             </div>
         </section>
 
-        <!-- TAB 2: USER'S BORROWED BOOKS (USER VIEW) -->
+        <!-- TAB 2: MY BOOKS (MEMBER RETURN ENABLED) -->
         <section id="tab-my-books" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-book-bookmark mr-2 text-indigo-600"></i>My Borrowed Books & History</h2>
@@ -219,7 +198,7 @@
                                 <th class="p-3">Borrowed At</th>
                                 <th class="p-3">Due Date</th>
                                 <th class="p-3">Status</th>
-                                <th class="p-3 text-right">Returned At</th>
+                                <th class="p-3 text-right">Action / Returned At</th>
                             </tr>
                         </thead>
                         <tbody id="user-history-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
@@ -228,7 +207,7 @@
             </div>
         </section>
 
-        <!-- TAB 3: MEMBER APPROVALS (ADMIN ONLY) -->
+        <!-- TAB 3: MEMBER APPROVALS -->
         <section id="tab-approvals" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-user-check mr-2 text-indigo-600"></i>Pending Member Registrations</h2>
@@ -239,7 +218,7 @@
                                 <th class="p-4">Email</th>
                                 <th class="p-4">Name</th>
                                 <th class="p-4">Address</th>
-                                <th class="p-4">Role</th>
+                                <th class="p-4">Formation</th>
                                 <th class="p-4 text-right">Action</th>
                             </tr>
                         </thead>
@@ -249,19 +228,16 @@
             </div>
         </section>
 
-        <!-- TAB 4: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
+        <!-- TAB 4: APPROVED MEMBERS -->
         <section id="tab-members" class="space-y-6 hidden">
-            <div class="bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-semibold text-slate-800">Approved Members Directory</h2>
-            </div>
             <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-4">Email / ID</th>
+                                <th class="p-4">Email</th>
                                 <th class="p-4">Name</th>
-                                <th class="p-4">Member Number</th>
+                                <th class="p-4">Member ID</th>
                                 <th class="p-4">Role</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
@@ -272,28 +248,25 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
+        <!-- TAB 5: LOANS & CHECKOUT -->
         <section id="tab-audit" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Checkout Form -->
                 <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Checkout Book</h3>
                     <form onsubmit="handleBorrow(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Approved Member</label>
-                            <select id="borrow-member" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required></select>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
+                            <select id="borrow-member" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Book (In Stock)</label>
-                            <select id="borrow-book" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required></select>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Book</label>
+                            <select id="borrow-book" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition shadow-sm">Confirm Checkout</button>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm transition">Confirm Checkout</button>
                     </form>
                 </div>
-
-                <!-- Admin Audit Log Table -->
                 <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Active Loans & History</h3>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Active Loans</h3>
                     <div class="overflow-y-auto max-h-96">
                         <table class="w-full text-left text-sm">
                             <thead>
@@ -317,68 +290,63 @@
     <!-- MODAL: ADD BOOK -->
     <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
         <div class="bg-white text-slate-800 rounded-xl max-w-xl w-full p-6 shadow-xl my-8">
-            <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-book-medical text-indigo-600 mr-2"></i>Add New Book to Catalog</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-book-medical text-indigo-600 mr-2"></i>Add New Book</h3>
             <form onsubmit="handleAddBook(event)" class="space-y-3">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Accession Number <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-accessionNumber" placeholder="e.g. ACC-2026-001 or 2085" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Accession Number</label>
+                        <input type="text" id="new-book-accession" placeholder="ACC-2026-001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal System <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-dewey" placeholder="e.g. 100 / 230.2 / 510" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal / Subject Number</label>
+                        <input type="text" id="new-book-subject" placeholder="230.2" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Book Title <span class="text-rose-500">*</span></label>
-                    <input type="text" id="new-book-title" placeholder="Full Book Title" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Book Title</label>
+                    <input type="text" id="new-book-title" placeholder="Title" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Author <span class="text-rose-500">*</span></label>
-                    <input type="text" id="new-book-author" placeholder="Author Name" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Author(s)</label>
+                    <input type="text" id="new-book-author" placeholder="Author" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Subject / Category <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-category" placeholder="e.g. Philosophy, Theology, Science" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Category 1</label>
+                        <input type="text" id="new-book-cat1" placeholder="Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Shelf-Row Location <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-location" placeholder="e.g. Shelf 1, Row 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Shelf-Row Location</label>
+                        <input type="text" id="new-book-location" placeholder="Shelf 1, Row 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Year of Pub. <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-year" placeholder="e.g. 1993" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Year</label>
+                        <input type="text" id="new-book-year" placeholder="2024" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Edition <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-edition" placeholder="e.g. 1st / Rev." class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Edition</label>
+                        <input type="text" id="new-book-edition" placeholder="1st" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Volume <span class="text-rose-500">*</span></label>
-                        <input type="text" id="new-book-volume" placeholder="e.g. Vol. 1 / N/A" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Volume</label>
+                        <input type="text" id="new-book-volume" placeholder="Vol. 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies <span class="text-rose-500">*</span></label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Copies</label>
                         <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
-
                 <div class="flex justify-end space-x-3 pt-4 border-t border-slate-200">
-                    <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100 text-sm">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">Save Book</button>
+                    <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm">Save Book</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- FIREBASE MODULE SCRIPT -->
+    <!-- FIREBASE & APP SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -404,138 +372,76 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {}, settings: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
         let currentUser = null;
         let isAdmin = false;
 
-        // BACKUP DATA LOADED FROM JSON (lwcs-library-backup.json)
-        const BACKUP_BOOKS = [
-            { id: "b-e67eace5-0da2-482b-a970-4f54dc81d4dc", title: "CHRISTIAN PHILOSOPHY", author: "Etienne H. Gilson", category: "Philosophy", year: "1993", accessionNumber: "2085", deweyDecimal: "189", edition: "1st", volume: "N/A", location: "Shelf 4, Row 4", totalCopies: 1, availableCopies: 1 },
-            { id: "b-3e0651b4-f7af-4b9a-abfc-32fb8595c1dd", title: "Catechism of the Catholic Church", author: "-", category: "Theology", year: "1994", accessionNumber: "-", deweyDecimal: "238.2", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-d2752c43-51e2-4d8b-99ae-e1301728f8e1", title: "Proving the Catholic Faith is Biblical", author: "Dave Armstrong", category: "Catholic Church - Apologetic Works, Doctrines", year: "2015", accessionNumber: "-", deweyDecimal: "230.2", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-82198eff-4429-4647-afe9-a153e865f3e3", title: "Reading the Church Fathers", author: "James L. Papandrea", category: "Patristics", year: "2022", accessionNumber: "-", deweyDecimal: "270.1", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-31098523-4900-44ac-a902-95e1babe5fe7", title: "Mathematics Methods Revision Series Units 1 and 2 Year 11", author: "O.T. Lee", category: "Mathematics", year: "-", accessionNumber: "-", deweyDecimal: "510", edition: "Revision", volume: "Units 1-2", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-9c0db81d-5e78-4390-98ec-474df48e1095", title: "Mathematics Methods - Units 3 and 4 Year 12 ATAR COURSE", author: "Greg Hill", category: "Mathematics", year: "2016", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-a9638c34-e4aa-4890-8023-59c13a2ca367", title: "Mathematics Methods ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-8a57e05d-dd3f-408f-8c0c-94327db6d533", title: "Mathematics Specialist ATAR Course Year 12 Units 3 and 4", author: "O.T. Lee", category: "Mathematics", year: "2015", accessionNumber: "-", deweyDecimal: "510", edition: "ATAR", volume: "Units 3-4", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-2df8f84e-f7f0-4a15-9284-819225b6c2ea", title: "The Great Courses Study Workbook for Basic Math", author: "Murray H. Siegel, Ph.D.", category: "Mathematics", year: "1997", accessionNumber: "-", deweyDecimal: "510", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-c3d20c15-03a8-4aef-80b9-be22aa20a6b9", title: "Algebra I Course Workbook", author: "James A. Sellers, Ph.D.", category: "Mathematics", year: "2009", accessionNumber: "-", deweyDecimal: "512", edition: "1st", volume: "Vol. 1", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-b8de99a7-c3be-4337-ac68-e71b7e98290a", title: "Exploring Physics Year 12 Experiments, Investigations, and Problems", author: "Geoff Lewis, Malcolm Johnson, Dr. Warren Stannard", category: "Science", year: "2015", accessionNumber: "-", deweyDecimal: "530", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-7bda5491-0f9a-45f6-8d95-c1ee5472f20b", title: "Creelman Exam Questions PHYSICS", author: "Roy Skinner", category: "Science", year: "2017", accessionNumber: "-", deweyDecimal: "530", edition: "2017 Ed.", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-25bb27a8-4765-46e4-b97c-d90e16b1e227", title: "The Oxford Handbook of Philosophy of Religion", author: "William J. Wainwright", category: "Philosophy", year: "2005", accessionNumber: "-", deweyDecimal: "210", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
-            { id: "b-87e2fbea-b4cb-4cac-8878-dfb75c085da9", title: "Nelson Chemistry Units 1 and 2 for the Australian Curriculum", author: "Debra Smith, Anna Davis, Anne Disney", category: "Science", year: "2014", accessionNumber: "-", deweyDecimal: "540", edition: "1st", volume: "Units 1-2", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-93447507-b0a8-42dd-be8b-c76d7264d6de", title: "Roman Catholic Political Philosophy", author: "James V. Schall", category: "Christianity and Politics", year: "2004", accessionNumber: "-", deweyDecimal: "261.7", edition: "1st", volume: "N/A", location: "Shelf 33, Row 33 — Wala", totalCopies: 1, availableCopies: 1 },
-            { id: "b-4504ff8f-8c2d-40a8-a6f6-543cafd3da16", title: "The New WEBSTER'S INTERNATIONAL Encyclopedia", author: "Michael D. Harkavy", category: "Encyclopedia", year: "1991", accessionNumber: "196", deweyDecimal: "031", edition: "New Int'l", volume: "N/A", location: "Shelf 42, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-171792ee-897d-4189-b403-75639f8707d5", title: "GOD AND HIS CREATURES THEODICY", author: "Celestine N. Bittle", category: "Philosophy", year: "1953", accessionNumber: "0413C9", deweyDecimal: "214", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 },
-            { id: "b-d94be3c8-255b-4795-b8bb-431d0c05edde", title: "BELIEF IN GOD", author: "T. J. Mawson", category: "Philosophy", year: "2005", accessionNumber: "2031", deweyDecimal: "212.1", edition: "1st", volume: "N/A", location: "Shelf 5, Row 6", totalCopies: 1, availableCopies: 1 }
+        const SEED_BOOKS = [
+            { id: "b-0", title: "Roman Catholic Political Philosophy", author: "James V. Schall", subjectNumber: "-", year: "2004", category1: "Christianity and Politics - Catholic Church", category2: "Politrical Science - Philosophy", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-1", title: "Human Biology Year 11 ATAR Course - Units 1 and 2", author: "Peter Walster", subjectNumber: "-", year: "2015", category1: "Science", category2: "Biology - Human Biology", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-2", title: "Nelson Physics Units 3 and 4 for the Australian Curriculum", author: "Neil Champion, Robert Farr, Kate Wilson", subjectNumber: "-", year: "2015", category1: "Science", category2: "Physics", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-3", title: "Human Perspectives Units 1 and 2 ATAR 7ed", author: "T.J. Newton, A.P. Joyce", subjectNumber: "-", year: "2014", category1: "Science", category2: "Biology - Human Biology", accessionNumber: "-", volume: "-", edition: "7th", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
+            { id: "b-4", title: "Nelson Physics Units 1 and 2 for the Australian Curriculum", author: "Neil Champion, Geoff Cody, Robert Farr, Megan Mundy, Kate Wilson", subjectNumber: "-", year: "2014", category1: "Science", category2: "Physics", accessionNumber: "-", volume: "-", edition: "1st", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 }
         ];
 
-        const BACKUP_MEMBERS = [
-            { email: "aldrianbastidacanoy@gmail.com", name: "Aldrian Canoy", memberNumber: "LWCS-2026-001", role: "Seminarian", address: "Sitio Mojon, Binicuil, Kabankalan City" },
-            { email: "daniel.reyes@lwcs.edu", name: "Daniel Reyes", memberNumber: "LWCS-2026-014", role: "Seminarian", address: "Kabankalan City" },
-            { email: "maria.santos@lwcs.edu", name: "Maria Santos", memberNumber: "LWCS-2026-021", role: "Faculty", address: "Kabankalan City" },
-            { email: "joseph.cruz@lwcs.edu", name: "Joseph Dela Cruz", memberNumber: "LWCS-2026-032", role: "Seminarian", address: "Kabankalan City" },
-            { email: "anna.villanueva@lwcs.edu", name: "Anna Villanueva", memberNumber: "LWCS-2026-008", role: "Staff", address: "Kabankalan City" }
+        const SEED_MEMBERS = [
+            { email: "aldrianbastidacanoy@gmail.com", name: "Aldrian Canoy", memberNumber: "LWCS-2026-001", role: "Seminarian", address: "Kabankalan City" },
+            { email: "daniel.reyes@lwcs.edu", name: "Daniel Reyes", memberNumber: "LWCS-2026-014", role: "Seminarian", address: "Kabankalan City" }
         ];
 
-        // Live Clock & Date Interval
         setInterval(() => {
             const now = new Date();
-            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            const dateStr = now.toLocaleDateString(undefined, options);
-            const timeStr = now.toLocaleTimeString();
             const datetimeEl = document.getElementById('live-datetime');
-            if (datetimeEl) {
-                datetimeEl.innerHTML = `${dateStr}<br><span class="font-bold text-indigo-200">${timeStr}</span>`;
-            }
+            if (datetimeEl) datetimeEl.innerHTML = `${now.toLocaleDateString()} <span class="font-bold text-indigo-200">${now.toLocaleTimeString()}</span>`;
         }, 1000);
 
         window.manualRefresh = function() {
-            const icon = document.getElementById('refresh-icon');
-            if (icon) icon.classList.add('fa-spin');
             evaluateUserAccess();
             renderAll();
-            setTimeout(() => {
-                if (icon) icon.classList.remove('fa-spin');
-            }, 400);
         };
 
         window.loginWithGoogle = async function () {
-            try {
-                await signInWithPopup(auth, googleProvider);
-            } catch (error) {
-                console.error("Google Sign-In Error:", error);
-                alert("Sign-in failed: " + error.message);
-            }
+            try { await signInWithPopup(auth, googleProvider); } catch (e) { alert("Sign-in failed: " + e.message); }
         };
 
         window.logoutUser = async function () {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Logout Error:", error);
-            }
+            try { await signOut(auth); } catch (e) { console.error(e); }
         };
 
         async function checkAndSeedDatabase() {
             try {
                 const booksSnap = await getDocs(collection(db, "books"));
                 if (booksSnap.empty) {
-                    for (let book of BACKUP_BOOKS) {
-                        await setDoc(doc(db, "books", book.id), book);
-                    }
+                    for (let b of SEED_BOOKS) { await setDoc(doc(db, "books", b.id), b); }
                 }
-
                 const membersSnap = await getDocs(collection(db, "members"));
                 if (membersSnap.empty) {
-                    for (let m of BACKUP_MEMBERS) {
-                        await setDoc(doc(db, "members", m.email), m);
-                    }
+                    for (let m of SEED_MEMBERS) { await setDoc(doc(db, "members", m.email), m); }
                 }
-            } catch (e) {
-                console.error("Seeding check error:", e);
-            }
+            } catch (e) { console.error("Seeding error:", e); }
         }
 
         function evaluateUserAccess() {
             if (!currentUser) return;
-            
-            const loginGateway = document.getElementById('login-gateway');
-            const regGateway = document.getElementById('registration-gateway');
-            const pendingGateway = document.getElementById('pending-gateway');
-            const rejectedGateway = document.getElementById('rejected-gateway');
-            const appContainer = document.getElementById('app-container');
+            const emailLower = currentUser.email.toLowerCase();
+            const isAdminUser = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(emailLower);
 
-            loginGateway.classList.add('hidden');
-            regGateway.classList.add('hidden');
-            pendingGateway.classList.add('hidden');
-            rejectedGateway.classList.add('hidden');
-            appContainer.classList.add('hidden');
+            document.getElementById('login-gateway').classList.add('hidden');
+            document.getElementById('registration-gateway').classList.add('hidden');
+            document.getElementById('pending-gateway').classList.add('hidden');
+            document.getElementById('rejected-gateway').classList.add('hidden');
+            document.getElementById('app-container').classList.add('hidden');
 
-            const userEmailLower = currentUser.email.toLowerCase();
-            const isAdminUser = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(userEmailLower);
-
-            if (isAdminUser) {
-                appContainer.classList.remove('hidden');
+            if (isAdminUser || state.members[emailLower]) {
+                document.getElementById('app-container').classList.remove('hidden');
                 updateAuthUI();
                 renderAll();
-                return;
-            }
-
-            const isApproved = state.members[userEmailLower];
-            const isPending = state.pendingMembers[userEmailLower];
-            const isRefused = state.refusedMembers[userEmailLower];
-
-            if (isApproved) {
-                appContainer.classList.remove('hidden');
-                updateAuthUI();
-                renderAll();
-            } else if (isRefused) {
-                rejectedGateway.classList.remove('hidden');
-            } else if (isPending) {
-                pendingGateway.classList.remove('hidden');
+            } else if (state.pendingMembers[emailLower]) {
+                document.getElementById('pending-gateway').classList.remove('hidden');
+            } else if (state.refusedMembers[emailLower]) {
+                document.getElementById('rejected-gateway').classList.remove('hidden');
             } else {
-                regGateway.classList.remove('hidden');
+                document.getElementById('registration-gateway').classList.remove('hidden');
             }
         }
 
@@ -549,285 +455,149 @@
                 currentUser = null;
                 isAdmin = false;
                 document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('registration-gateway').classList.add('hidden');
-                document.getElementById('pending-gateway').classList.add('hidden');
-                document.getElementById('rejected-gateway').classList.add('hidden');
                 document.getElementById('login-gateway').classList.remove('hidden');
             }
         });
 
         function updateAuthUI() {
-            const roleBadge = document.getElementById('role-badge');
-            const adminOnlyElements = document.querySelectorAll('.admin-only');
-            const userOnlyElements = document.querySelectorAll('.user-only');
-
             document.getElementById('user-name').innerText = currentUser.displayName || 'User';
             document.getElementById('user-email').innerText = currentUser.email;
             document.getElementById('user-avatar').src = currentUser.photoURL || 'https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff';
-
-            if (isAdmin) {
-                roleBadge.innerText = 'Role: Administrator (Full Trace & Management)';
-                adminOnlyElements.forEach(el => el.classList.remove('hidden'));
-                userOnlyElements.forEach(el => el.classList.add('hidden'));
-                document.getElementById('stat-card-2-label').innerText = "Approved Members";
-                document.getElementById('stat-card-3-label').innerText = "Active Loans";
-            } else {
-                roleBadge.innerText = `Role: Standard Member (${currentUser.email})`;
-                adminOnlyElements.forEach(el => el.classList.add('hidden'));
-                userOnlyElements.forEach(el => el.classList.remove('hidden'));
-                document.getElementById('stat-card-2-label').innerText = "My Borrowed Total";
-                document.getElementById('stat-card-3-label').innerText = "My Active Loans";
-            }
+            document.getElementById('role-badge').innerText = isAdmin ? 'Role: Administrator' : 'Role: Standard Member';
+            
+            document.querySelectorAll('.admin-only').forEach(el => isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden'));
+            document.querySelectorAll('.user-only').forEach(el => !isAdmin ? el.classList.remove('hidden') : el.classList.add('hidden'));
         }
 
-        // Firestore Real-Time Listeners
         onSnapshot(collection(db, "books"), (snapshot) => {
             state.books = {};
-            snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach(docSnap => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             renderAll();
         });
-
         onSnapshot(collection(db, "members"), (snapshot) => {
             state.members = {};
-            snapshot.forEach((docSnap) => { state.members[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach(docSnap => { state.members[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
             evaluateUserAccess();
             renderAll();
         });
-
         onSnapshot(collection(db, "pendingMembers"), (snapshot) => {
             state.pendingMembers = {};
-            snapshot.forEach((docSnap) => { state.pendingMembers[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach(docSnap => { state.pendingMembers[docSnap.id.toLowerCase()] = docSnap.data(); });
             evaluateUserAccess();
-            renderAll();
         });
-
         onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
             state.refusedMembers = {};
-            snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
-            renderAll();
+            snapshot.forEach(docSnap => { state.refusedMembers[docSnap.id.toLowerCase()] = docSnap.data(); });
         });
-
         onSnapshot(collection(db, "transactions"), (snapshot) => {
             state.transactions = {};
-            snapshot.forEach((docSnap) => { state.transactions[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach(docSnap => { state.transactions[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             renderAll();
         });
 
         window.switchTab = function (tabName) {
             ['catalog', 'my-books', 'approvals', 'members', 'audit'].forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if (el) el.classList.add('hidden');
-                const nav = document.getElementById(`nav-${t}`);
-                if (nav) nav.classList.remove('bg-indigo-800');
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).classList.remove('bg-indigo-800');
             });
-            const targetTab = document.getElementById(`tab-${tabName}`);
-            if (targetTab) targetTab.classList.remove('hidden');
-            const targetNav = document.getElementById(`nav-${tabName}`);
-            if (targetNav) targetNav.classList.add('bg-indigo-800');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).classList.add('bg-indigo-800');
             renderAll();
         };
 
-        window.openModal = function (modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-        };
-
-        window.closeModal = function (modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        };
-
-        function renderStats() {
-            const totalBooks = Object.values(state.books).reduce((acc, b) => acc + (b.availableCopies !== undefined ? b.availableCopies : (b.available || 1)), 0);
-            const statBooks = document.getElementById('stat-books');
-            if (statBooks) statBooks.innerText = totalBooks;
-
-            if (isAdmin) {
-                const statMembers = document.getElementById('stat-members');
-                if (statMembers) statMembers.innerText = Object.keys(state.members).length;
-                const activeLoans = Object.values(state.transactions).filter(tx => !tx.returned && !tx.returnDate).length;
-                const statLoans = document.getElementById('stat-loans');
-                if (statLoans) statLoans.innerText = activeLoans;
-            } else if (currentUser) {
-                const myEmail = currentUser.email.toLowerCase();
-                const myTxs = Object.values(state.transactions).filter(tx => (tx.memberEmail && tx.memberEmail.toLowerCase() === myEmail) || (tx.memberId && tx.memberId.toLowerCase() === myEmail));
-                const myActive = myTxs.filter(tx => !tx.returned && !tx.returnDate).length;
-                const statMembers = document.getElementById('stat-members');
-                if (statMembers) statMembers.innerText = myTxs.length;
-                const statLoans = document.getElementById('stat-loans');
-                if (statLoans) statLoans.innerText = myActive;
-            }
-        }
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
         window.renderCatalog = function () {
-            const searchInput = document.getElementById('search-input');
-            const query = searchInput ? searchInput.value.toLowerCase() : '';
+            const query = (document.getElementById('search-input')?.value || '').toLowerCase();
             const tbody = document.getElementById('book-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            const booksList = Object.values(state.books).filter(book => {
-                const accNum = (book.accessionNumber || book.callNumber || '').toLowerCase();
-                const dewey = (book.deweyDecimal || '').toLowerCase();
-                const ed = (book.edition || '').toLowerCase();
-                const vol = (book.volume || '').toLowerCase();
-                return (book.title && book.title.toLowerCase().includes(query)) ||
-                    (book.author && book.author.toLowerCase().includes(query)) ||
-                    accNum.includes(query) ||
-                    dewey.includes(query) ||
-                    ed.includes(query) ||
-                    vol.includes(query) ||
-                    (book.category && book.category.toLowerCase().includes(query)) ||
-                    (book.location && book.location.toLowerCase().includes(query));
-            });
+            const list = Object.values(state.books).filter(b => 
+                (b.title && b.title.toLowerCase().includes(query)) ||
+                (b.author && b.author.toLowerCase().includes(query)) ||
+                (b.accessionNumber && b.accessionNumber.toLowerCase().includes(query)) ||
+                (b.category1 && b.category1.toLowerCase().includes(query))
+            );
 
-            if (booksList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">No books found.</td></tr>`;
                 return;
             }
 
-            for (let book of booksList) {
-                const available = book.availableCopies !== undefined ? book.availableCopies : (book.available || 1);
-                const total = book.totalCopies !== undefined ? book.totalCopies : (book.total || 1);
-                const accessionNum = book.accessionNumber || book.callNumber || '—';
-                const deweyNum = book.deweyDecimal || '—';
-                const editionStr = book.edition || '—';
-                const volumeStr = book.volume || '—';
-                const yearStr = book.year || '—';
-
+            for (let b of list) {
+                const avail = b.availableCopies !== undefined ? b.availableCopies : 1;
+                const total = b.totalCopies !== undefined ? b.totalCopies : 1;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 text-xs">
                         <td class="p-3 font-mono">
-                            <span class="text-indigo-700 font-bold" title="Accession Number">Acc: ${accessionNum}</span><br>
-                            <span class="text-slate-600 font-semibold" title="Dewey Decimal System">DDC: ${deweyNum}</span>
+                            <span class="text-indigo-700 font-bold">Acc: ${b.accessionNumber || '—'}</span><br>
+                            <span class="text-slate-500">Sub: ${b.subjectNumber || '—'}</span>
                         </td>
                         <td class="p-3">
-                            <span class="font-medium text-slate-900 text-sm">${book.title}</span><br>
-                            <span class="text-slate-600">By ${book.author}</span>
+                            <span class="font-medium text-slate-900 text-sm">${b.title}</span><br>
+                            <span class="text-slate-600">By ${b.author}</span>
                         </td>
-                        <td class="p-3 text-slate-600">
-                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.category || 'General'}</span>
-                        </td>
-                        <td class="p-3 text-slate-600">
-                            <div><span class="font-semibold">Ed:</span> ${editionStr} | <span class="font-semibold">Vol:</span> ${volumeStr}</div>
-                            <div class="text-slate-400">Year: ${yearStr}</div>
-                        </td>
-                        <td class="p-3 font-medium text-slate-700">
-                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || 'Shelf 1, Row 1'}
-                        </td>
-                        <td class="p-3">
-                            <span class="px-2 py-1 rounded-full font-semibold ${available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
-                                ${available} / ${total}
-                            </span>
-                        </td>
-                        ${isAdmin ? `
-                        <td class="p-3 text-right">
-                            <button onclick="deleteBook('${book.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Book"><i class="fa-solid fa-trash"></i></button>
-                        </td>` : ''}
+                        <td class="p-3 text-slate-600"><span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${b.category1 || 'General'}</span></td>
+                        <td class="p-3 text-slate-600">Ed: ${b.edition || '—'} | Vol: ${b.volume || '—'}<br><span class="text-slate-400">Year: ${b.year || '—'}</span></td>
+                        <td class="p-3 font-medium text-slate-700"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${b.location || 'Shelf 1'}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded-full font-semibold ${avail > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">${avail}/${total}</span></td>
+                        ${isAdmin ? `<td class="p-3 text-right"><button onclick="deleteBook('${b.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash"></i></button></td>` : ''}
                     </tr>`;
             }
         };
 
-        function renderMembers() {
-            const approvalsTbody = document.getElementById('approvals-table-body');
-            if (approvalsTbody) {
-                approvalsTbody.innerHTML = '';
-                const pendingList = Object.values(state.pendingMembers);
-                if (pendingList.length === 0) {
-                    approvalsTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No pending member registrations.</td></tr>`;
-                } else {
-                    for (let p of pendingList) {
-                        approvalsTbody.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-4 font-mono text-xs text-slate-500">${p.email}</td>
-                                <td class="p-4 font-medium text-slate-900">${p.name}</td>
-                                <td class="p-4 text-slate-600">${p.address}</td>
-                                <td class="p-4 text-slate-600">${p.role || 'Seminarian'}</td>
-                                <td class="p-4 text-right space-x-2">
-                                    <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Accept</button>
-                                    <button onclick="refuseMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Refuse</button>
-                                </td>
-                            </tr>`;
-                    }
-                }
-            }
-
-            const tbody = document.getElementById('member-table-body');
-            if (tbody) {
-                tbody.innerHTML = '';
-                const membersList = Object.values(state.members);
-                if (membersList.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No approved members yet.</td></tr>`;
-                } else {
-                    for (let m of membersList) {
-                        tbody.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-4 font-mono text-xs text-slate-500">${m.email || m.id}</td>
-                                <td class="p-4 font-medium text-slate-900">${m.name}</td>
-                                <td class="p-4 text-slate-600 font-mono">${m.memberNumber || 'LWCS-2026-XXX'}</td>
-                                <td class="p-4 text-slate-600">${m.role || 'Seminarian'}</td>
-                                <td class="p-4 text-right">
-                                    <button onclick="deleteMember('${m.email || m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Revoke Member"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>`;
-                    }
-                }
-            }
-        }
-
         function renderTransactions() {
+            // Populate Admin Checkout dropdowns
             const memberSelect = document.getElementById('borrow-member');
             const membersList = Object.values(state.members);
             if (memberSelect) {
                 memberSelect.innerHTML = membersList.length
                     ? membersList.map(m => `<option value="${m.email || m.id}">${m.name} (${m.email || m.id})</option>`).join('')
-                    : '<option value="" disabled selected>No approved members found</option>';
+                    : '<option value="" disabled selected>No approved members</option>';
             }
 
             const bookSelect = document.getElementById('borrow-book');
-            const availableBooks = Object.values(state.books).filter(b => (b.availableCopies !== undefined ? b.availableCopies : (b.available || 1)) > 0);
+            const availableBooks = Object.values(state.books).filter(b => (b.availableCopies !== undefined ? b.availableCopies : 1) > 0);
             if (bookSelect) {
                 bookSelect.innerHTML = availableBooks.length
-                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Acc #: ${b.accessionNumber || b.callNumber || 'N/A'})</option>`).join('')
+                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Acc #: ${b.accessionNumber || 'N/A'})</option>`).join('')
                     : '<option value="" disabled selected>No books available</option>';
             }
 
+            // Admin Audit Table
             const auditTbody = document.getElementById('audit-table-body');
             if (auditTbody) {
                 auditTbody.innerHTML = '';
                 const txs = Object.values(state.transactions);
                 if (txs.length === 0) {
-                    auditTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No borrowing history recorded.</td></tr>`;
+                    auditTbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No borrowing records.</td></tr>`;
                 } else {
                     for (let tx of txs) {
-                        const mKey = (tx.memberEmail || tx.memberId || '').toLowerCase();
-                        const member = state.members[mKey] || { name: mKey };
+                        const member = state.members[(tx.memberEmail || '').toLowerCase()] || { name: tx.memberEmail };
                         const book = state.books[tx.bookId] || { title: tx.bookId };
                         const isReturned = tx.returned || tx.returnDate;
                         auditTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
-                                <td class="p-3 font-medium">${member.name}<br><span class="text-xs text-slate-400 font-mono">${mKey}</span></td>
+                                <td class="p-3 font-medium">${member.name}<br><span class="text-xs text-slate-400 font-mono">${tx.memberEmail}</span></td>
                                 <td class="p-3 text-slate-700">${book.title}</td>
-                                <td class="p-3 text-xs font-mono text-slate-500">Out: ${tx.checkoutDate || tx.timestamp || '—'}<br>Due: ${tx.dueDate || '—'}</td>
-                                <td class="p-3">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${isReturned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
-                                        ${isReturned ? 'Returned' : 'Active Loan'}
-                                    </span>
-                                </td>
+                                <td class="p-3 text-xs font-mono text-slate-500">Out: ${tx.checkoutDate}<br>Due: ${tx.dueDate}</td>
+                                <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${isReturned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${isReturned ? 'Returned' : 'Active Loan'}</span></td>
                                 <td class="p-3 text-right">
-                                    ${!isReturned ? `<button onclick="returnBook('${tx.id}', '${tx.bookId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Mark Returned</button>` : `<span class="text-xs text-slate-400">${tx.returnDate || 'Returned'}</span>`}
+                                    ${!isReturned ? `<button onclick="returnBook('${tx.id}', '${tx.bookId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs">Return</button>` : `<span class="text-xs text-slate-400">${tx.returnDate}</span>`}
                                 </td>
                             </tr>`;
                     }
                 }
             }
 
+            // Member My Books Table (With Self-Return Button)
             const userHistoryTbody = document.getElementById('user-history-table-body');
             if (userHistoryTbody && currentUser) {
                 userHistoryTbody.innerHTML = '';
                 const myEmail = currentUser.email.toLowerCase();
-                const myTxs = Object.values(state.transactions).filter(tx => {
-                    const mEmail = (tx.memberEmail || tx.memberId || '').toLowerCase();
-                    return mEmail === myEmail;
-                });
+                const myTxs = Object.values(state.transactions).filter(tx => (tx.memberEmail || '').toLowerCase() === myEmail);
                 if (myTxs.length === 0) {
                     userHistoryTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">You have not borrowed any books yet.</td></tr>`;
                 } else {
@@ -837,15 +607,15 @@
                         userHistoryTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
                                 <td class="p-3 font-medium text-slate-900">${book.title}</td>
-                                <td class="p-3 text-xs font-mono text-slate-500">${tx.checkoutDate || tx.timestamp || '—'}</td>
-                                <td class="p-3 text-xs font-mono text-slate-500">${tx.dueDate || '—'}</td>
+                                <td class="p-3 text-xs font-mono text-slate-500">${tx.checkoutDate}</td>
+                                <td class="p-3 text-xs font-mono text-slate-500">${tx.dueDate}</td>
                                 <td class="p-3">
                                     <span class="px-2 py-1 rounded-full text-xs font-semibold ${isReturned ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
                                         ${isReturned ? 'Returned' : 'Currently Borrowed'}
                                     </span>
                                 </td>
-                                <td class="p-3 text-right text-xs font-mono text-slate-500">
-                                    ${isReturned ? (tx.returnDate || 'Returned') : '—'}
+                                <td class="p-3 text-right">
+                                    ${!isReturned ? `<button onclick="returnBook('${tx.id}', '${tx.bookId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow transition"><i class="fa-solid fa-arrow-rotate-left mr-1"></i>Return Book</button>` : `<span class="text-xs font-mono text-slate-500">${tx.returnDate}</span>`}
                                 </td>
                             </tr>`;
                     }
@@ -854,112 +624,34 @@
         }
 
         function renderAll() {
-            renderStats();
+            document.getElementById('stat-books').innerText = Object.keys(state.books).length;
+            document.getElementById('stat-members').innerText = Object.keys(state.members).length;
+            document.getElementById('stat-loans').innerText = Object.values(state.transactions).filter(tx => !tx.returned).length;
             renderCatalog();
-            renderMembers();
             renderTransactions();
         }
-
-        window.handleUserSelfRegister = async function (e) {
-            e.preventDefault();
-            if (!currentUser) return;
-            const name = document.getElementById('self-reg-name').value.trim();
-            const age = document.getElementById('self-reg-age').value.trim();
-            const formation = document.getElementById('self-reg-formation').value.trim();
-            const address = document.getElementById('self-reg-address').value.trim();
-            const emailLower = currentUser.email.toLowerCase();
-
-            try {
-                const regData = { email: emailLower, name, age, formation, address, role: formation, timestamp: new Date().toLocaleString() };
-                state.pendingMembers[emailLower] = regData;
-                evaluateUserAccess();
-
-                await setDoc(doc(db, "pendingMembers", emailLower), regData);
-            } catch (error) {
-                alert("Registration failed: " + error.message);
-            }
-        };
-
-        window.approveMember = async function (email) {
-            if (!isAdmin) return;
-            const emailLower = email.toLowerCase();
-            const pendingData = state.pendingMembers[emailLower];
-            if (!pendingData) return;
-
-            try {
-                const approvedData = {
-                    id: "m-" + Date.now(),
-                    email: emailLower,
-                    name: pendingData.name,
-                    role: pendingData.formation || pendingData.role || "Seminarian",
-                    memberNumber: "LWCS-2026-" + Math.floor(100 + Math.random() * 900),
-                    address: pendingData.address
-                };
-                state.members[emailLower] = approvedData;
-                delete state.pendingMembers[emailLower];
-                renderMembers();
-
-                await setDoc(doc(db, "members", emailLower), approvedData);
-                await deleteDoc(doc(db, "pendingMembers", emailLower));
-            } catch (error) {
-                alert("Acceptance failed: " + error.message);
-            }
-        };
-
-        window.refuseMember = async function (email) {
-            if (!isAdmin) return;
-            const emailLower = email.toLowerCase();
-            try {
-                const pendingData = state.pendingMembers[emailLower] || { email: emailLower };
-                state.refusedMembers[emailLower] = pendingData;
-                delete state.pendingMembers[emailLower];
-                renderMembers();
-
-                await setDoc(doc(db, "refusedMembers", emailLower), pendingData);
-                await deleteDoc(doc(db, "pendingMembers", emailLower));
-            } catch (error) {
-                alert("Refusal failed: " + error.message);
-            }
-        };
 
         window.handleAddBook = async function (e) {
             e.preventDefault();
             if (!isAdmin) return;
             const id = "b-" + Date.now();
-            const accessionNumber = document.getElementById('new-book-accessionNumber').value.trim();
-            const deweyDecimal = document.getElementById('new-book-dewey').value.trim();
-            const title = document.getElementById('new-book-title').value.trim();
-            const author = document.getElementById('new-book-author').value.trim();
-            const category = document.getElementById('new-book-category').value.trim();
-            const location = document.getElementById('new-book-location').value.trim();
-            const year = document.getElementById('new-book-year').value.trim();
-            const edition = document.getElementById('new-book-edition').value.trim();
-            const volume = document.getElementById('new-book-volume').value.trim();
-            const copies = parseInt(document.getElementById('new-book-copies').value, 10);
-
-            try {
-                const bookRef = doc(db, "books", id);
-                const bookData = {
-                    id,
-                    accessionNumber,
-                    callNumber: accessionNumber, // Kept for backward compatibility
-                    deweyDecimal,
-                    title,
-                    author,
-                    category,
-                    location,
-                    year,
-                    edition,
-                    volume,
-                    totalCopies: copies,
-                    availableCopies: copies
-                };
-                await setDoc(bookRef, bookData);
-                closeModal('book-modal');
-                e.target.reset();
-            } catch (error) {
-                alert("Failed to save book: " + error.message);
-            }
+            const bookData = {
+                id,
+                accessionNumber: document.getElementById('new-book-accession').value.trim(),
+                subjectNumber: document.getElementById('new-book-subject').value.trim(),
+                title: document.getElementById('new-book-title').value.trim(),
+                author: document.getElementById('new-book-author').value.trim(),
+                category1: document.getElementById('new-book-cat1').value.trim(),
+                location: document.getElementById('new-book-location').value.trim(),
+                year: document.getElementById('new-book-year').value.trim(),
+                edition: document.getElementById('new-book-edition').value.trim(),
+                volume: document.getElementById('new-book-volume').value.trim(),
+                totalCopies: parseInt(document.getElementById('new-book-copies').value, 10),
+                availableCopies: parseInt(document.getElementById('new-book-copies').value, 10)
+            };
+            await setDoc(doc(db, "books", id), bookData);
+            closeModal('book-modal');
+            e.target.reset();
         };
 
         window.handleBorrow = async function (e) {
@@ -971,58 +663,45 @@
             const checkoutDate = new Date().toISOString().split('T')[0];
             const dueDate = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
 
-            try {
-                const bookObj = state.books[bookId];
-                const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : (bookObj.available || 1);
-                
-                await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail - 1 });
-                await setDoc(doc(db, "transactions", txId), {
-                    id: txId,
-                    memberEmail,
-                    bookId,
-                    checkoutDate,
-                    dueDate,
-                    returned: false,
-                    returnDate: null
-                });
-                e.target.reset();
-            } catch (error) {
-                alert("Checkout failed: " + error.message);
+            const bookObj = state.books[bookId];
+            const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : 1;
+            if (currentAvail <= 0) {
+                alert("Book is out of stock!");
+                return;
             }
+
+            await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail - 1 });
+            await setDoc(doc(db, "transactions", txId), {
+                id: txId,
+                memberEmail,
+                bookId,
+                checkoutDate,
+                dueDate,
+                returned: false,
+                returnDate: null
+            });
+            e.target.reset();
         };
 
         window.returnBook = async function (txId, bookId) {
-            if (!isAdmin) return;
             const returnDate = new Date().toISOString().split('T')[0];
             try {
                 await updateDoc(doc(db, "transactions", txId), { returned: true, returnDate });
                 const bookObj = state.books[bookId];
-                const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : (bookObj.available || 0);
-                const total = bookObj.totalCopies !== undefined ? bookObj.totalCopies : (bookObj.total || 1);
-                if (currentAvail < total) {
-                    await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail + 1 });
+                if (bookObj) {
+                    const currentAvail = bookObj.availableCopies !== undefined ? bookObj.availableCopies : 0;
+                    const total = bookObj.totalCopies !== undefined ? bookObj.totalCopies : 1;
+                    if (currentAvail < total) {
+                        await updateDoc(doc(db, "books", bookId), { availableCopies: currentAvail + 1 });
+                    }
                 }
-            } catch (error) {
-                alert("Return failed: " + error.message);
+            } catch (e) {
+                alert("Failed to return book: " + e.message);
             }
         };
 
-        window.deleteBook = async function (bookId) {
-            if (!isAdmin) return;
-            try {
-                await deleteDoc(doc(db, "books", bookId));
-            } catch (error) {
-                alert("Delete failed: " + error.message);
-            }
-        };
-
-        window.deleteMember = async function (memberKey) {
-            if (!isAdmin) return;
-            try {
-                await deleteDoc(doc(db, "members", memberKey.toLowerCase()));
-            } catch (error) {
-                alert("Delete failed: " + error.message);
-            }
+        window.deleteBook = async function (id) {
+            if (isAdmin) await deleteDoc(doc(db, "books", id));
         };
     </script>
 </body>
