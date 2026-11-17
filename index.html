@@ -544,19 +544,20 @@
             }
         };
 
-        // Real-Time Calling Functions
+        // Real-Time Calling Functions (Normalized to lowercase emails)
         window.startCallTo = async function(targetEmail, targetName) {
             if (!currentUser) return;
             const callId = "call_" + Date.now();
             activeCallId = callId;
-            const roomName = `LWCS_Library_${btoa(currentUser.email + targetEmail).replace(/=/g, '')}`;
+            const cleanTarget = targetEmail.trim().toLowerCase();
+            const roomName = `LWCS_Library_${btoa(currentUser.email.toLowerCase() + cleanTarget).replace(/=/g, '')}`;
 
             try {
                 await setDoc(doc(db, "calls", callId), {
                     id: callId,
-                    callerEmail: currentUser.email,
+                    callerEmail: currentUser.email.toLowerCase(),
                     callerName: currentUser.displayName || currentUser.email,
-                    targetEmail: targetEmail,
+                    targetEmail: cleanTarget,
                     targetName: targetName,
                     roomName: roomName,
                     status: "ringing",
@@ -648,16 +649,19 @@
             rejectedGateway.classList.add('hidden');
             appContainer.classList.add('hidden');
 
-            if (isAdmin) {
+            const userEmailLower = currentUser.email.toLowerCase();
+            const isAdminUser = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(userEmailLower);
+
+            if (isAdminUser) {
                 appContainer.classList.remove('hidden');
                 updateAuthUI();
                 renderAll();
                 return;
             }
 
-            const isApproved = state.members[currentUser.email];
-            const isPending = state.pendingMembers[currentUser.email];
-            const isRefused = state.refusedMembers[currentUser.email];
+            const isApproved = state.members[userEmailLower] || state.members[currentUser.email];
+            const isPending = state.pendingMembers[userEmailLower] || state.pendingMembers[currentUser.email];
+            const isRefused = state.refusedMembers[userEmailLower] || state.refusedMembers[currentUser.email];
 
             if (isApproved) {
                 appContainer.classList.remove('hidden');
@@ -675,7 +679,7 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                isAdmin = ADMIN_EMAILS.includes(user.email);
+                isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(user.email.toLowerCase());
                 evaluateUserAccess();
             } else {
                 currentUser = null;
@@ -721,21 +725,22 @@
 
         onSnapshot(collection(db, "members"), (snapshot) => {
             state.members = {};
-            snapshot.forEach((docSnap) => { state.members[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach((docSnap) => { state.members[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
             evaluateUserAccess();
             renderAll();
         });
 
         onSnapshot(collection(db, "pendingMembers"), (snapshot) => {
             state.pendingMembers = {};
-            snapshot.forEach((docSnap) => { state.pendingMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach((docSnap) => { state.pendingMembers[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
             evaluateUserAccess();
             renderAll();
         });
 
         onSnapshot(collection(db, "refusedMembers"), (snapshot) => {
             state.refusedMembers = {};
-            snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            snapshot.forEach((docSnap) => { state.refusedMembers[docSnap.id.toLowerCase()] = { id: docSnap.id, ...docSnap.data() }; });
+            evaluateUserAccess();
             renderAll();
         });
 
@@ -745,9 +750,11 @@
             renderAll();
         });
 
+        // Robust Call Listener with Normalized Lowercase Email Matching
         onSnapshot(collection(db, "calls"), (snapshot) => {
             if (!currentUser) return;
             let activeCallExists = false;
+            const myEmail = currentUser.email.toLowerCase();
 
             snapshot.forEach((docSnap) => {
                 const call = docSnap.data();
@@ -761,10 +768,11 @@
                     }
                 }
                 
-                if (call.targetEmail === currentUser.email && call.status === "ringing" && !activeCallId) {
+                const target = call.targetEmail ? call.targetEmail.toLowerCase() : "";
+                if (target === myEmail && call.status === "ringing" && !activeCallId) {
                     activeCallId = call.id;
-                    document.getElementById('caller-name').innerText = call.callerName;
-                    document.getElementById('caller-email').innerText = call.callerEmail;
+                    document.getElementById('caller-name').innerText = call.callerName || 'Library Member';
+                    document.getElementById('caller-email').innerText = call.callerEmail || '';
                     openModal('incoming-call-modal');
                 } else if (call.id === activeCallId && call.status === "answered") {
                     closeModal('incoming-call-modal');
@@ -813,7 +821,8 @@
                 const statLoans = document.getElementById('stat-loans');
                 if (statLoans) statLoans.innerText = activeLoans;
             } else if (currentUser) {
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser.email);
+                const myEmail = currentUser.email.toLowerCase();
+                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail.toLowerCase() === myEmail);
                 const myActive = myTxs.filter(tx => !tx.returned).length;
                 const statMembers = document.getElementById('stat-members');
                 if (statMembers) statMembers.innerText = myTxs.length;
@@ -1002,7 +1011,7 @@
                 } else {
                     txs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                     for (let tx of txs) {
-                        const member = state.members[tx.memberEmail] || { name: tx.memberEmail };
+                        const member = state.members[tx.memberEmail.toLowerCase()] || { name: tx.memberEmail };
                         const book = state.books[tx.bookId] || { title: tx.bookId };
                         auditTbody.innerHTML += `
                             <tr class="hover:bg-slate-50">
@@ -1025,7 +1034,8 @@
             const userHistoryTbody = document.getElementById('user-history-table-body');
             if (userHistoryTbody && currentUser) {
                 userHistoryTbody.innerHTML = '';
-                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail === currentUser.email);
+                const myEmail = currentUser.email.toLowerCase();
+                const myTxs = Object.values(state.transactions).filter(tx => tx.memberEmail.toLowerCase() === myEmail);
                 if (myTxs.length === 0) {
                     userHistoryTbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">You have not borrowed any books yet.</td></tr>`;
                 } else {
@@ -1065,13 +1075,14 @@
             const age = document.getElementById('self-reg-age').value.trim();
             const formation = document.getElementById('self-reg-formation').value.trim();
             const address = document.getElementById('self-reg-address').value.trim();
+            const emailLower = currentUser.email.toLowerCase();
 
             try {
-                state.pendingMembers[currentUser.email] = { email: currentUser.email, name, age, formation, address };
+                state.pendingMembers[emailLower] = { email: emailLower, name, age, formation, address };
                 evaluateUserAccess();
 
-                await setDoc(doc(db, "pendingMembers", currentUser.email), {
-                    email: currentUser.email,
+                await setDoc(doc(db, "pendingMembers", emailLower), {
+                    email: emailLower,
                     name,
                     age,
                     formation,
@@ -1085,22 +1096,23 @@
 
         window.approveMember = async function (email) {
             if (!isAdmin) return;
-            const pendingData = state.pendingMembers[email];
+            const emailLower = email.toLowerCase();
+            const pendingData = state.pendingMembers[emailLower];
             if (!pendingData) return;
 
             try {
-                state.members[email] = { id: email, ...pendingData };
-                delete state.pendingMembers[email];
+                state.members[emailLower] = { id: emailLower, ...pendingData };
+                delete state.pendingMembers[emailLower];
                 renderMembers();
 
-                await setDoc(doc(db, "members", email), {
-                    id: email,
+                await setDoc(doc(db, "members", emailLower), {
+                    id: emailLower,
                     name: pendingData.name,
                     age: pendingData.age,
                     formation: pendingData.formation,
                     address: pendingData.address
                 });
-                await deleteDoc(doc(db, "pendingMembers", email));
+                await deleteDoc(doc(db, "pendingMembers", emailLower));
             } catch (error) {
                 alert("Acceptance failed: " + error.message);
             }
@@ -1108,14 +1120,15 @@
 
         window.refuseMember = async function (email) {
             if (!isAdmin) return;
+            const emailLower = email.toLowerCase();
             try {
-                const pendingData = state.pendingMembers[email] || { email };
-                state.refusedMembers[email] = pendingData;
-                delete state.pendingMembers[email];
+                const pendingData = state.pendingMembers[emailLower] || { email: emailLower };
+                state.refusedMembers[emailLower] = pendingData;
+                delete state.pendingMembers[emailLower];
                 renderMembers();
 
-                await setDoc(doc(db, "refusedMembers", email), pendingData);
-                await deleteDoc(doc(db, "pendingMembers", email));
+                await setDoc(doc(db, "refusedMembers", emailLower), pendingData);
+                await deleteDoc(doc(db, "pendingMembers", emailLower));
             } catch (error) {
                 alert("Refusal failed: " + error.message);
             }
@@ -1209,7 +1222,7 @@
         window.deleteMember = async function (memberEmail) {
             if (!isAdmin) return;
             try {
-                await deleteDoc(doc(db, "members", memberEmail));
+                await deleteDoc(doc(db, "members", memberEmail.toLowerCase()));
             } catch (error) {
                 alert("Delete failed: " + error.message);
             }
