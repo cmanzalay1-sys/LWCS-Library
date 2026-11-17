@@ -74,7 +74,11 @@
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
             <h2 class="text-xl font-bold text-white">Registration Pending</h2>
-            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Please check back later.</p>
+            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Your screen will automatically refresh once approved!</p>
+            <div class="animate-pulse flex justify-center items-center space-x-2 text-xs text-indigo-400 pt-2">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>Listening for admin approval...</span>
+            </div>
             <button onclick="logoutUser()" class="mt-4 text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
         </div>
     </div>
@@ -382,6 +386,7 @@
         window.manualRefresh = function() {
             const icon = document.getElementById('refresh-icon');
             if (icon) icon.classList.add('fa-spin');
+            evaluateUserAccess();
             renderAll();
             setTimeout(() => {
                 if (icon) icon.classList.remove('fa-spin');
@@ -486,7 +491,7 @@
             }
         }
 
-        // Optimized Instant Firestore Real-time Listeners
+        // Real-time Firestore Listeners that instantly push state changes to logged-in users
         onSnapshot(collection(db, "books"), (snapshot) => {
             state.books = {};
             snapshot.forEach((docSnap) => { state.books[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
