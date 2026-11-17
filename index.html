@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <!-- MEMBERSHIP REGISTRATION GATEWAY (Shown if user hasn't registered yet) -->
+    <!-- MEMBERSHIP REGISTRATION GATEWAY -->
     <div id="registration-gateway" class="hidden flex-grow flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 space-y-6">
             <div class="text-center">
@@ -133,9 +133,10 @@
             </div>
             
             <!-- Navigation Tabs -->
-            <nav class="px-6 pb-4 flex space-x-2 border-t border-indigo-500/40 pt-3">
+            <nav class="px-6 pb-4 flex flex-wrap gap-2 border-t border-indigo-500/40 pt-3">
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition text-sm">Catalog</button>
                 <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">My Borrowed Books</button>
+                <button onclick="switchTab('directory')" id="nav-directory" class="px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm"><i class="fa-solid fa-address-book mr-1"></i>Directory & Calling</button>
                 <button onclick="switchTab('approvals')" id="nav-approvals" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Member Approvals</button>
                 <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Approved Members</button>
                 <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Admin Audit & History</button>
@@ -227,7 +228,52 @@
             </div>
         </section>
 
-        <!-- TAB 3: MEMBER APPROVALS (ADMIN ONLY) -->
+        <!-- TAB 3: DIRECTORY & CALLING (ADMINS & MEMBERS) -->
+        <section id="tab-directory" class="space-y-6 hidden">
+            <!-- Library Admin Contacts Card -->
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center space-x-3 border-b pb-3">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Library Administrators</h2>
+                        <p class="text-xs text-slate-500">You can contact any of the administrators below for assistance or book renewals.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="admin-directory-cards">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Approved Members & Direct Call/Message Board -->
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex items-center space-x-3 border-b pb-3">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Library Members Directory</h2>
+                        <p class="text-xs text-slate-500">Connect with registered library members or start a simulated call.</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                                <th class="p-3">Email / ID</th>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Formation / Details</th>
+                                <th class="p-3 text-right">Direct Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="directory-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: MEMBER APPROVALS (ADMIN ONLY) -->
         <section id="tab-approvals" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-user-check mr-2 text-indigo-600"></i>Pending Member Registrations</h2>
@@ -249,7 +295,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
+        <!-- TAB 5: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
         <section id="tab-members" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800">Approved Members Directory</h2>
@@ -273,7 +319,7 @@
             </div>
         </section>
 
-        <!-- TAB 5: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
+        <!-- TAB 6: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
         <section id="tab-audit" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Checkout Form -->
@@ -380,6 +426,30 @@
         </div>
     </div>
 
+    <!-- MODAL: SIMULATE CALL / MESSAGE -->
+    <div id="call-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-800 rounded-xl max-w-sm w-full p-6 shadow-xl text-center space-y-4">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto animate-pulse">
+                <i class="fa-solid fa-phone-volume"></i>
+            </div>
+            <div>
+                <h3 id="call-target-name" class="text-lg font-bold text-slate-900">Connecting Call...</h3>
+                <p id="call-target-email" class="text-xs font-mono text-slate-500 mt-1"></p>
+            </div>
+            <div class="bg-slate-100 p-3 rounded-lg text-xs text-slate-600">
+                <i class="fa-solid fa-circle-info mr-1 text-indigo-600"></i> Direct voice/chat link initiated with LWCS Library protocol.
+            </div>
+            <div class="flex space-x-2 pt-2">
+                <button onclick="window.location.href='mailto:' + currentCallEmail" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-xs font-medium transition">
+                    <i class="fa-solid fa-envelope mr-1"></i> Send Email
+                </button>
+                <button onclick="closeModal('call-modal')" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg text-xs font-medium transition">
+                    <i class="fa-solid fa-phone-slash mr-1"></i> End Call
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -409,6 +479,7 @@
         let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
         let currentUser = null;
         let isAdmin = false;
+        window.currentCallEmail = "";
 
         // Live Clock & Date Interval
         setInterval(() => {
@@ -447,6 +518,13 @@
             } catch (error) {
                 console.error("Logout Error:", error);
             }
+        };
+
+        window.startCall = function(name, email) {
+            window.currentCallEmail = email;
+            document.getElementById('call-target-name').innerText = `Calling ${name}...`;
+            document.getElementById('call-target-email').innerText = email;
+            openModal('call-modal');
         };
 
         function evaluateUserAccess() {
@@ -563,7 +641,7 @@
         });
 
         window.switchTab = function (tabName) {
-            ['catalog', 'my-books', 'approvals', 'members', 'audit'].forEach(t => {
+            ['catalog', 'my-books', 'directory', 'approvals', 'members', 'audit'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
                 const nav = document.getElementById(`nav-${t}`);
@@ -655,11 +733,60 @@
                         </td>
                         ${isAdmin ? `
                         <td class="p-3 text-right">
-                            <button onclick="deleteBook('${book.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Book"><i class="fa-solid fa-trash fa-base"></i></button>
+                            <button onclick="deleteBook('${book.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Book"><i class="fa-solid fa-trash"></i></button>
                         </td>` : ''}
                     </tr>`;
             }
         };
+
+        function renderDirectory() {
+            const adminCardsContainer = document.getElementById('admin-directory-cards');
+            if (adminCardsContainer) {
+                adminCardsContainer.innerHTML = ADMIN_EMAILS.map(email => `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
+                                ${email.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-slate-900 text-sm">Library Administrator</h4>
+                                <p class="text-xs text-slate-500 font-mono">${email}</p>
+                            </div>
+                        </div>
+                        <button onclick="startCall('Admin (${email.split('@')[0]})', '${email}')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center space-x-1">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>Call</span>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const directoryTbody = document.getElementById('directory-table-body');
+            if (directoryTbody) {
+                directoryTbody.innerHTML = '';
+                const membersList = Object.values(state.members);
+                if (membersList.length === 0) {
+                    directoryTbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">No approved members found.</td></tr>`;
+                } else {
+                    for (let m of membersList) {
+                        directoryTbody.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-mono text-xs text-slate-500">${m.id}</td>
+                                <td class="p-3 font-medium text-slate-900">${m.name}</td>
+                                <td class="p-3 text-slate-600 text-xs">
+                                    Formation: ${m.formation || '—'}<br>Address: ${m.address || '—'}
+                                </td>
+                                <td class="p-3 text-right">
+                                    <button onclick="startCall('${m.name}', '${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition inline-flex items-center space-x-1">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <span>Call Member</span>
+                                    </button>
+                                </td>
+                            </tr>`;
+                    }
+                }
+            }
+        }
 
         function renderMembers() {
             const approvalsTbody = document.getElementById('approvals-table-body');
@@ -787,6 +914,7 @@
         function renderAll() {
             renderStats();
             renderCatalog();
+            renderDirectory();
             renderMembers();
             renderTransactions();
         }
