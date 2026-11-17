@@ -28,7 +28,58 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER (Hidden until logged in) -->
+    <!-- MEMBERSHIP REGISTRATION GATEWAY (Shown if user hasn't registered yet) -->
+    <div id="registration-gateway" class="hidden flex-grow flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 space-y-6">
+            <div class="text-center">
+                <div class="w-14 h-14 bg-emerald-600/20 text-emerald-400 rounded-xl flex items-center justify-center text-2xl mx-auto border border-emerald-500/30 mb-3">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">Complete Your Membership</h2>
+                <p class="text-xs text-slate-400 mt-1">Please provide your details to request library access. An admin will review and approve your account.</p>
+            </div>
+            <form onsubmit="handleUserSelfRegister(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
+                    <input type="text" id="self-reg-name" placeholder="John Doe" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Age</label>
+                        <input type="number" id="self-reg-age" min="1" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Formation Level</label>
+                        <input type="text" id="self-reg-formation" placeholder="e.g. Senior / Year 3" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Address</label>
+                    <input type="text" id="self-reg-address" placeholder="123 Street Name" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" required>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-md mt-2">
+                    Submit Registration for Approval
+                </button>
+            </form>
+            <div class="text-center pt-2">
+                <button onclick="logoutUser()" class="text-xs text-slate-400 hover:text-white underline">Sign out / Switch account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PENDING APPROVAL GATEWAY (Shown if user is registered but not approved yet) -->
+    <div id="pending-gateway" class="hidden flex-grow flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-4">
+            <div class="w-14 h-14 bg-amber-600/20 text-amber-400 rounded-xl flex items-center justify-center text-2xl mx-auto border border-amber-500/30">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h2 class="text-xl font-bold text-white">Registration Pending</h2>
+            <p class="text-sm text-slate-400">Your membership registration has been submitted and is currently awaiting admin confirmation. Please check back later.</p>
+            <button onclick="logoutUser()" class="mt-4 text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Hidden until approved / admin) -->
     <div id="app-container" class="hidden w-full max-w-7xl mx-auto p-4 md:p-6 space-y-6 flex-grow">
         
         <!-- Header Navigation -->
@@ -65,7 +116,8 @@
             <nav class="px-6 pb-4 flex space-x-2 border-t border-indigo-500/40 pt-3">
                 <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition text-sm">Catalog</button>
                 <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">My Borrowed Books</button>
-                <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Members Directory</button>
+                <button onclick="switchTab('approvals')" id="nav-approvals" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Member Approvals</button>
+                <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Approved Members</button>
                 <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Admin Audit & History</button>
             </nav>
         </header>
@@ -153,21 +205,39 @@
             </div>
         </section>
 
-        <!-- TAB 3: MEMBERS DIRECTORY (ADMIN ONLY) -->
-        <section id="tab-members" class="space-y-6 hidden">
-            <div class="flex justify-between items-center bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-semibold text-slate-800">Members Information Directory</h2>
-                <button onclick="openModal('member-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
-                    <i class="fa-solid fa-user-plus mr-2"></i>Register Member Profile
-                </button>
+        <!-- TAB 3: MEMBER APPROVALS (ADMIN ONLY) -->
+        <section id="tab-approvals" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-user-check mr-2 text-indigo-600"></i>Pending Member Registrations</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                                <th class="p-4">Email</th>
+                                <th class="p-4">Name</th>
+                                <th class="p-4">Age</th>
+                                <th class="p-4">Address</th>
+                                <th class="p-4">Formation Level</th>
+                                <th class="p-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvals-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
+                    </table>
+                </div>
             </div>
+        </section>
 
+        <!-- TAB 4: APPROVED MEMBERS DIRECTORY (ADMIN ONLY) -->
+        <section id="tab-members" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-800">Approved Members Directory</h2>
+            </div>
             <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-4">ID / Gmail</th>
+                                <th class="p-4">Email / ID</th>
                                 <th class="p-4">Name</th>
                                 <th class="p-4">Age</th>
                                 <th class="p-4">Address</th>
@@ -181,7 +251,7 @@
             </div>
         </section>
 
-        <!-- TAB 4: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
+        <!-- TAB 5: ADMIN AUDIT & TRANSACTIONS (ADMIN ONLY) -->
         <section id="tab-audit" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Checkout Form -->
@@ -189,7 +259,7 @@
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Checkout Book</h3>
                     <form onsubmit="handleBorrow(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Approved Member</label>
                             <select id="borrow-member" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required></select>
                         </div>
                         <div>
@@ -252,41 +322,6 @@
         </div>
     </div>
 
-    <!-- MODAL: REGISTER MEMBER PROFILE -->
-    <div id="member-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white text-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Register Member Profile</h3>
-            <form onsubmit="handleAddMember(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Member Email / ID (Must match user's Google Gmail)</label>
-                    <input type="email" id="new-member-email" placeholder="user@gmail.com" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
-                    <input type="text" id="new-member-name" placeholder="John Doe" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Age</label>
-                        <input type="number" id="new-member-age" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Formation Level</label>
-                        <input type="text" id="new-member-formation" placeholder="e.g. Senior / Year 3" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">Address</label>
-                    <input type="text" id="new-member-address" placeholder="123 Street Name" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
-                </div>
-                <div class="flex justify-end space-x-3 mt-4">
-                    <button type="button" onclick="closeModal('member-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100 text-sm">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm">Save Profile</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -303,7 +338,6 @@
             measurementId: "G-JWSVYC90KL"
         };
 
-        // Administrator Gmail configured here:
         const ADMIN_EMAILS = [
             "cmanzalay1@gmail.com"
         ];
@@ -313,11 +347,11 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, transactions: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, transactions: {} };
         let currentUser = null;
         let isAdmin = false;
 
-        // Live Real-Time Clock & Date Interval
+        // Live Clock & Date Interval
         setInterval(() => {
             const now = new Date();
             const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
@@ -348,21 +382,41 @@
 
         onAuthStateChanged(auth, (user) => {
             const loginGateway = document.getElementById('login-gateway');
+            const regGateway = document.getElementById('registration-gateway');
+            const pendingGateway = document.getElementById('pending-gateway');
             const appContainer = document.getElementById('app-container');
+
+            loginGateway.classList.add('hidden');
+            regGateway.classList.add('hidden');
+            pendingGateway.classList.add('hidden');
+            appContainer.classList.add('hidden');
 
             if (user) {
                 currentUser = user;
-                isAdmin = ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(user.email);
-                
-                loginGateway.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                updateAuthUI();
-                renderAll();
+                isAdmin = ADMIN_EMAILS.includes(user.email);
+
+                if (isAdmin) {
+                    appContainer.classList.remove('hidden');
+                    updateAuthUI();
+                    renderAll();
+                } else {
+                    // Check if member is approved or pending
+                    const isApproved = state.members[user.email];
+                    const isPending = state.pendingMembers[user.email];
+
+                    if (isApproved) {
+                        appContainer.classList.remove('hidden');
+                        updateAuthUI();
+                        renderAll();
+                    } else if (isPending) {
+                        pendingGateway.classList.remove('hidden');
+                    } else {
+                        regGateway.classList.remove('hidden');
+                    }
+                }
             } else {
                 currentUser = null;
                 isAdmin = false;
-                
-                appContainer.classList.add('hidden');
                 loginGateway.classList.remove('hidden');
             }
         });
@@ -380,11 +434,11 @@
                 roleBadge.innerText = 'Role: Administrator (Full Trace & Management)';
                 adminOnlyElements.forEach(el => el.classList.remove('hidden'));
                 userOnlyElements.forEach(el => el.classList.add('hidden'));
-                document.getElementById('stat-card-2-label').innerText = "Registered Members";
+                document.getElementById('stat-card-2-label').innerText = "Approved Members";
                 document.getElementById('stat-card-3-label').innerText = "Active Loans";
                 switchTab('catalog');
             } else {
-                roleBadge.innerText = `Role: Standard User (${currentUser.email})`;
+                roleBadge.innerText = `Role: Standard Member (${currentUser.email})`;
                 adminOnlyElements.forEach(el => el.classList.add('hidden'));
                 userOnlyElements.forEach(el => el.classList.remove('hidden'));
                 document.getElementById('stat-card-2-label').innerText = "My Borrowed Total";
@@ -396,33 +450,47 @@
         // Firestore data listeners
         onSnapshot(collection(db, "books"), (snapshot) => {
             const booksData = {};
-            snapshot.forEach((docSnap) => {
-                booksData[docSnap.id] = { id: docSnap.id, ...docSnap.data() };
-            });
+            snapshot.forEach((docSnap) => { booksData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             state.books = booksData;
             renderAll();
         });
 
         onSnapshot(collection(db, "members"), (snapshot) => {
             const membersData = {};
-            snapshot.forEach((docSnap) => {
-                membersData[docSnap.id] = { id: docSnap.id, ...docSnap.data() };
-            });
+            snapshot.forEach((docSnap) => { membersData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             state.members = membersData;
+            if (currentUser && !isAdmin) {
+                if (membersData[currentUser.email]) {
+                    document.getElementById('pending-gateway').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                    updateAuthUI();
+                }
+            }
+            renderAll();
+        });
+
+        onSnapshot(collection(db, "pendingMembers"), (snapshot) => {
+            const pendingData = {};
+            snapshot.forEach((docSnap) => { pendingData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
+            state.pendingMembers = pendingData;
+            if (currentUser && !isAdmin) {
+                if (!state.members[currentUser.email] && pendingData[currentUser.email]) {
+                    document.getElementById('app-container').classList.add('hidden');
+                    document.getElementById('pending-gateway').classList.remove('hidden');
+                }
+            }
             renderAll();
         });
 
         onSnapshot(collection(db, "transactions"), (snapshot) => {
             const txData = {};
-            snapshot.forEach((docSnap) => {
-                txData[docSnap.id] = { id: docSnap.id, ...docSnap.data() };
-            });
+            snapshot.forEach((docSnap) => { txData[docSnap.id] = { id: docSnap.id, ...docSnap.data() }; });
             state.transactions = txData;
             renderAll();
         });
 
         window.switchTab = function (tabName) {
-            ['catalog', 'my-books', 'members', 'audit'].forEach(t => {
+            ['catalog', 'my-books', 'approvals', 'members', 'audit'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
                 const nav = document.getElementById(`nav-${t}`);
@@ -495,39 +563,63 @@
         };
 
         function renderMembers() {
-            const tbody = document.getElementById('member-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const membersList = Object.values(state.members);
-
-            if (membersList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No member profiles registered yet.</td></tr>`;
-                return;
+            // Render Pending Approvals
+            const approvalsTbody = document.getElementById('approvals-table-body');
+            if (approvalsTbody) {
+                approvalsTbody.innerHTML = '';
+                const pendingList = Object.values(state.pendingMembers);
+                if (pendingList.length === 0) {
+                    approvalsTbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">No pending member registrations.</td></tr>`;
+                } else {
+                    for (let p of pendingList) {
+                        approvalsTbody.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-mono text-xs text-slate-500">${p.email}</td>
+                                <td class="p-4 font-medium text-slate-900">${p.name}</td>
+                                <td class="p-4 text-slate-600">${p.age}</td>
+                                <td class="p-4 text-slate-600">${p.address}</td>
+                                <td class="p-4 text-slate-600">${p.formation}</td>
+                                <td class="p-4 text-right space-x-2">
+                                    <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Approve</button>
+                                    <button onclick="rejectMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold transition">Reject</button>
+                                </td>
+                            </tr>`;
+                    }
+                }
             }
 
-            for (let m of membersList) {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-4 font-mono text-xs text-slate-500">${m.id}</td>
-                        <td class="p-4 font-medium text-slate-900">${m.name}</td>
-                        <td class="p-4 text-slate-600">${m.age}</td>
-                        <td class="p-4 text-slate-600">${m.address}</td>
-                        <td class="p-4 text-slate-600">${m.formation}</td>
-                        <td class="p-4 text-right">
-                            <button onclick="deleteMember('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Member"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+            // Render Approved Members
+            const tbody = document.getElementById('member-table-body');
+            if (tbody) {
+                tbody.innerHTML = '';
+                const membersList = Object.values(state.members);
+                if (membersList.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">No approved members yet.</td></tr>`;
+                } else {
+                    for (let m of membersList) {
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-4 font-mono text-xs text-slate-500">${m.id}</td>
+                                <td class="p-4 font-medium text-slate-900">${m.name}</td>
+                                <td class="p-4 text-slate-600">${m.age}</td>
+                                <td class="p-4 text-slate-600">${m.address}</td>
+                                <td class="p-4 text-slate-600">${m.formation}</td>
+                                <td class="p-4 text-right">
+                                    <button onclick="deleteMember('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Revoke/Delete Member"><i class="fa-solid fa-trash"></i></button>
+                                </td>
+                            </tr>`;
+                    }
+                }
             }
         }
 
         function renderTransactions() {
-            // Dropdowns for Admin Checkout
             const memberSelect = document.getElementById('borrow-member');
             const membersList = Object.values(state.members);
             if (memberSelect) {
                 memberSelect.innerHTML = membersList.length
                     ? membersList.map(m => `<option value="${m.id}">${m.name} (${m.id})</option>`).join('')
-                    : '<option value="" disabled selected>No registered member profiles found</option>';
+                    : '<option value="" disabled selected>No approved members found</option>';
             }
 
             const bookSelect = document.getElementById('borrow-book');
@@ -538,7 +630,6 @@
                     : '<option value="" disabled selected>No books available</option>';
             }
 
-            // Admin Audit Log Table
             const auditTbody = document.getElementById('audit-table-body');
             if (auditTbody) {
                 auditTbody.innerHTML = '';
@@ -568,7 +659,6 @@
                 }
             }
 
-            // User Personal History Table
             const userHistoryTbody = document.getElementById('user-history-table-body');
             if (userHistoryTbody) {
                 userHistoryTbody.innerHTML = '';
@@ -604,10 +694,63 @@
             renderTransactions();
         }
 
-        // CRUD Actions
+        // User Self-Registration Action
+        window.handleUserSelfRegister = async function (e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const name = document.getElementById('self-reg-name').value.trim();
+            const age = document.getElementById('self-reg-age').value.trim();
+            const formation = document.getElementById('self-reg-formation').value.trim();
+            const address = document.getElementById('self-reg-address').value.trim();
+
+            try {
+                await setDoc(doc(db, "pendingMembers", currentUser.email), {
+                    email: currentUser.email,
+                    name,
+                    age,
+                    formation,
+                    address,
+                    timestamp: new Date().toLocaleString()
+                });
+                document.getElementById('registration-gateway').classList.add('hidden');
+                document.getElementById('pending-gateway').classList.remove('hidden');
+            } catch (error) {
+                alert("Registration failed: " + error.message);
+            }
+        };
+
+        // Admin Approval Actions
+        window.approveMember = async function (email) {
+            if (!isAdmin) return;
+            const pendingData = state.pendingMembers[email];
+            if (!pendingData) return;
+
+            try {
+                await setDoc(doc(db, "members", email), {
+                    name: pendingData.name,
+                    age: pendingData.age,
+                    formation: pendingData.formation,
+                    address: pendingData.address
+                });
+                await deleteDoc(doc(db, "pendingMembers", email));
+            } catch (error) {
+                alert("Approval failed: " + error.message);
+            }
+        };
+
+        window.rejectMember = async function (email) {
+            if (!isAdmin) return;
+            try {
+                await deleteDoc(doc(db, "pendingMembers", email));
+            } catch (error) {
+                alert("Rejection failed: " + error.message);
+            }
+        };
+
+        // Standard CRUD Actions
         window.handleAddBook = async function (e) {
             e.preventDefault();
-            if (!isAdmin) return alert("Unauthorized");
+            if (!isAdmin) return;
             const id = document.getElementById('new-book-id').value.trim();
             const title = document.getElementById('new-book-title').value.trim();
             const author = document.getElementById('new-book-author').value.trim();
@@ -627,27 +770,9 @@
             }
         };
 
-        window.handleAddMember = async function (e) {
-            e.preventDefault();
-            if (!isAdmin) return alert("Unauthorized");
-            const email = document.getElementById('new-member-email').value.trim().toLowerCase();
-            const name = document.getElementById('new-member-name').value.trim();
-            const age = document.getElementById('new-member-age').value.trim();
-            const formation = document.getElementById('new-member-formation').value.trim();
-            const address = document.getElementById('new-member-address').value.trim();
-
-            try {
-                await setDoc(doc(db, "members", email), { name, age, formation, address });
-                closeModal('member-modal');
-                e.target.reset();
-            } catch (error) {
-                alert("Failed to register member: " + error.message);
-            }
-        };
-
         window.handleBorrow = async function (e) {
             e.preventDefault();
-            if (!isAdmin) return alert("Unauthorized");
+            if (!isAdmin) return;
             const memberEmail = document.getElementById('borrow-member').value;
             const bookId = document.getElementById('borrow-book').value;
             const txId = "TX_" + Date.now();
@@ -669,13 +794,10 @@
         };
 
         window.returnBook = async function (txId, bookId) {
-            if (!isAdmin) return alert("Unauthorized");
+            if (!isAdmin) return;
             const returnTimestamp = new Date().toLocaleString();
             try {
-                await updateDoc(doc(db, "transactions", txId), {
-                    returned: true,
-                    returnTimestamp
-                });
+                await updateDoc(doc(db, "transactions", txId), { returned: true, returnTimestamp });
                 await updateDoc(doc(db, "books", bookId), { available: increment(1) });
             } catch (error) {
                 alert("Return failed: " + error.message);
@@ -683,7 +805,7 @@
         };
 
         window.deleteBook = async function (bookId) {
-            if (!isAdmin) return alert("Unauthorized");
+            if (!isAdmin) return;
             try {
                 await deleteDoc(doc(db, "books", bookId));
             } catch (error) {
@@ -692,7 +814,7 @@
         };
 
         window.deleteMember = async function (memberEmail) {
-            if (!isAdmin) return alert("Unauthorized");
+            if (!isAdmin) return;
             try {
                 await deleteDoc(doc(db, "members", memberEmail));
             } catch (error) {
