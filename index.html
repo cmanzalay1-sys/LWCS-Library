@@ -448,17 +448,23 @@
         </div>
     </div>
 
-    <!-- MODAL: ACTIVE ONGOING CALL -->
+    <!-- MODAL: ACTIVE ONGOING CALL WITH AUDIO -->
     <div id="active-call-modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-800 border border-slate-700 text-slate-100 rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-5">
-            <div class="w-20 h-20 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center text-3xl mx-auto border border-indigo-500/40 animate-pulse">
+        <div class="bg-slate-800 border border-slate-700 text-slate-100 rounded-2xl max-w-md w-full p-6 shadow-2xl text-center space-y-4">
+            <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center text-2xl mx-auto border border-indigo-500/40 animate-pulse">
                 <i class="fa-solid fa-headset"></i>
             </div>
             <div>
-                <h3 class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Connected Call</h3>
-                <h2 id="active-call-name" class="text-xl font-bold text-white mt-1">In Session</h2>
+                <h3 class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Connected Voice Call</h3>
+                <h2 id="active-call-name" class="text-lg font-bold text-white mt-1">In Session</h2>
                 <p id="call-duration" class="text-xs font-mono text-emerald-400 mt-1">00:00</p>
             </div>
+
+            <!-- Embedded Live Audio Stream Container -->
+            <div id="audio-iframe-container" class="w-full h-24 bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-700">
+                <p class="text-xs text-slate-400 animate-pulse">Connecting audio stream...</p>
+            </div>
+
             <button onclick="endActiveCall()" class="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-medium transition shadow-lg flex items-center justify-center space-x-2">
                 <i class="fa-solid fa-phone-slash"></i>
                 <span>End Call</span>
@@ -538,11 +544,12 @@
             }
         };
 
-        // Real-Time Calling Trigger
+        // Real-Time Calling Functions
         window.startCallTo = async function(targetEmail, targetName) {
             if (!currentUser) return;
             const callId = "call_" + Date.now();
             activeCallId = callId;
+            const roomName = `LWCS_Library_${btoa(currentUser.email + targetEmail).replace(/=/g, '')}`;
 
             try {
                 await setDoc(doc(db, "calls", callId), {
@@ -551,12 +558,14 @@
                     callerName: currentUser.displayName || currentUser.email,
                     targetEmail: targetEmail,
                     targetName: targetName,
-                    status: "ringing", // ringing, answered, rejected
+                    roomName: roomName,
+                    status: "ringing",
                     timestamp: Date.now()
                 });
 
                 document.getElementById('active-call-name').innerText = `Calling ${targetName}...`;
                 openModal('active-call-modal');
+                loadAudioRoom(roomName);
                 startCallTimer();
             } catch (error) {
                 alert("Failed to initiate call: " + error.message);
@@ -589,14 +598,28 @@
         window.endActiveCall = async function() {
             if (activeCallId) {
                 try {
+                    await updateDoc(doc(db, "calls", activeCallId), { status: "ended" });
                     await deleteDoc(doc(db, "calls", activeCallId));
                 } catch (e) { console.error(e); }
             }
+            endActiveCallLocally();
+        };
+
+        function endActiveCallLocally() {
             activeCallId = null;
             clearInterval(callTimerInterval);
             closeModal('active-call-modal');
             closeModal('incoming-call-modal');
-        };
+            const iframeContainer = document.getElementById('audio-iframe-container');
+            if (iframeContainer) iframeContainer.innerHTML = '';
+        }
+
+        function loadAudioRoom(roomName) {
+            const container = document.getElementById('audio-iframe-container');
+            if (container) {
+                container.innerHTML = `<iframe src="https://meet.jit.si/${roomName}#config.startWithAudioMuted=false&config.startWithVideoMuted=true" allow="microphone; camera" style="width:100%; height:100%; border:none;"></iframe>`;
+            }
+        }
 
         function startCallTimer() {
             let seconds = 0;
@@ -722,24 +745,38 @@
             renderAll();
         });
 
-        // Calls Real-Time Listener (Handles incoming calls & ringers)
         onSnapshot(collection(db, "calls"), (snapshot) => {
             if (!currentUser) return;
+            let activeCallExists = false;
+
             snapshot.forEach((docSnap) => {
                 const call = docSnap.data();
-                if (call.targetEmail === currentUser.email && call.status === "ringing") {
+                if (call.id === activeCallId) {
+                    activeCallExists = true;
+                    if (call.status === "rejected") {
+                        alert("Call was rejected.");
+                        endActiveCallLocally();
+                    } else if (call.status === "ended") {
+                        endActiveCallLocally();
+                    }
+                }
+                
+                if (call.targetEmail === currentUser.email && call.status === "ringing" && !activeCallId) {
                     activeCallId = call.id;
                     document.getElementById('caller-name').innerText = call.callerName;
                     document.getElementById('caller-email').innerText = call.callerEmail;
                     openModal('incoming-call-modal');
-                } else if (call.id === activeCallId && call.status === "rejected") {
-                    alert("Call was rejected.");
-                    endActiveCall();
                 } else if (call.id === activeCallId && call.status === "answered") {
                     closeModal('incoming-call-modal');
                     openModal('active-call-modal');
+                    loadAudioRoom(call.roomName || 'LWCS_Default_Room');
+                    startCallTimer();
                 }
             });
+
+            if (activeCallId && !activeCallExists) {
+                endActiveCallLocally();
+            }
         });
 
         window.switchTab = function (tabName) {
