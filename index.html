@@ -180,7 +180,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-search"></i>
                     </span>
-                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search library catalog..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search catalog by title, author, subject, Dewey..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-plus mr-2"></i>Add New Book
@@ -192,11 +192,13 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-4">Book ID</th>
-                                <th class="p-4">Title</th>
-                                <th class="p-4">Author</th>
-                                <th class="p-4">Available / Total</th>
-                                <th id="book-actions-th" class="admin-only hidden p-4 text-right">Actions</th>
+                                <th class="p-3">Accession / ID</th>
+                                <th class="p-3">Title & Author</th>
+                                <th class="p-3">Subject / Dewey</th>
+                                <th class="p-3">Pub. Year / Ed / Vol</th>
+                                <th class="p-3">Location</th>
+                                <th class="p-3">Stock</th>
+                                <th id="book-actions-th" class="admin-only hidden p-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="book-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
@@ -314,29 +316,65 @@
     </div>
 
     <!-- MODAL: ADD BOOK -->
-    <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white text-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Book</h3>
-            <form onsubmit="handleAddBook(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Book ID</label>
-                    <input type="text" id="new-book-id" placeholder="e.g. B001" class="w-full p-2 border border-slate-300 rounded-lg" required>
+    <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white text-slate-800 rounded-xl max-w-lg w-full p-6 shadow-xl my-8">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Book to Catalog</h3>
+            <form onsubmit="handleAddBook(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Accession Number</label>
+                        <input type="text" id="new-book-accession" placeholder="e.g. ACC-2026-001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Book ID / Call No.</label>
+                        <input type="text" id="new-book-id" placeholder="e.g. B001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Title</label>
-                    <input type="text" id="new-book-title" placeholder="Book Title" class="w-full p-2 border border-slate-300 rounded-lg" required>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Title</label>
+                    <input type="text" id="new-book-title" placeholder="Book Title" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Author</label>
-                    <input type="text" id="new-book-author" placeholder="Author Name" class="w-full p-2 border border-slate-300 rounded-lg" required>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Author</label>
+                    <input type="text" id="new-book-author" placeholder="Author Name" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Copies</label>
-                    <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg" required>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Pub. Year</label>
+                        <input type="number" id="new-book-year" placeholder="2026" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Edition</label>
+                        <input type="text" id="new-book-edition" placeholder="1st / Rev." class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Volume</label>
+                        <input type="text" id="new-book-volume" placeholder="Vol. 1" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                    </div>
                 </div>
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Save Book</button>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Shelf-Row Location</label>
+                        <input type="text" id="new-book-location" placeholder="e.g. Shelf 1, Row 2" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Subject / Category</label>
+                        <input type="text" id="new-book-subject" placeholder="e.g. Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal System</label>
+                        <input type="text" id="new-book-ddc" placeholder="e.g. 100 - Philosophy" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Total Copies</label>
+                        <input type="number" id="new-book-copies" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal('book-modal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-100 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm">Save Book</button>
                 </div>
             </form>
         </div>
@@ -575,30 +613,49 @@
             tbody.innerHTML = '';
 
             const booksList = Object.values(state.books).filter(book =>
-                book.title.toLowerCase().includes(query) ||
-                book.author.toLowerCase().includes(query) ||
-                book.id.toLowerCase().includes(query)
+                (book.title && book.title.toLowerCase().includes(query)) ||
+                (book.author && book.author.toLowerCase().includes(query)) ||
+                (book.id && book.id.toLowerCase().includes(query)) ||
+                (book.accession && book.accession.toLowerCase().includes(query)) ||
+                (book.subject && book.subject.toLowerCase().includes(query)) ||
+                (book.ddc && book.ddc.toLowerCase().includes(query))
             );
 
             if (booksList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 5 : 4}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="p-8 text-center text-slate-400">No books found in catalog.</td></tr>`;
                 return;
             }
 
             for (let book of booksList) {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-4 font-mono text-xs text-slate-500">${book.id}</td>
-                        <td class="p-4 font-medium text-slate-900">${book.title}</td>
-                        <td class="p-4 text-slate-600">${book.author}</td>
-                        <td class="p-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${book.available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
-                                ${book.available} / ${book.total} available
+                    <tr class="hover:bg-slate-50 text-xs">
+                        <td class="p-3">
+                            <span class="font-bold text-indigo-700">${book.accession || '—'}</span><br>
+                            <span class="font-mono text-slate-500">ID: ${book.id}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="font-medium text-slate-900 text-sm">${book.title}</span><br>
+                            <span class="text-slate-600">By ${book.author}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">${book.subject || 'General'}</span><br>
+                            <span class="font-mono text-slate-500 mt-1 inline-block">DDC: ${book.ddc || '—'}</span>
+                        </td>
+                        <td class="p-3 text-slate-600">
+                            Year: ${book.year || '—'}<br>
+                            Ed: ${book.edition || '—'} | Vol: ${book.volume || '—'}
+                        </td>
+                        <td class="p-3 font-medium text-slate-700">
+                            <i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${book.location || '—'}
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded-full font-semibold ${book.available > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">
+                                ${book.available} / ${book.total}
                             </span>
                         </td>
                         ${isAdmin ? `
-                        <td class="p-4 text-right">
-                            <button onclick="deleteBook('${book.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Book"><i class="fa-solid fa-trash"></i></button>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteBook('${book.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Book"><i class="fa-solid fa-trash fa-base"></i></button>
                         </td>` : ''}
                     </tr>`;
             }
@@ -666,7 +723,7 @@
             const availableBooks = Object.values(state.books).filter(b => b.available > 0);
             if (bookSelect) {
                 bookSelect.innerHTML = availableBooks.length
-                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Available: ${b.available})</option>`).join('')
+                    ? availableBooks.map(b => `<option value="${b.id}">${b.title} (Acc: ${b.accession || 'N/A'})</option>`).join('')
                     : '<option value="" disabled selected>No books available</option>';
             }
 
@@ -801,8 +858,15 @@
             e.preventDefault();
             if (!isAdmin) return;
             const id = document.getElementById('new-book-id').value.trim();
+            const accession = document.getElementById('new-book-accession').value.trim();
             const title = document.getElementById('new-book-title').value.trim();
             const author = document.getElementById('new-book-author').value.trim();
+            const year = document.getElementById('new-book-year').value.trim();
+            const edition = document.getElementById('new-book-edition').value.trim();
+            const volume = document.getElementById('new-book-volume').value.trim();
+            const location = document.getElementById('new-book-location').value.trim();
+            const subject = document.getElementById('new-book-subject').value.trim();
+            const ddc = document.getElementById('new-book-ddc').value.trim();
             const copies = parseInt(document.getElementById('new-book-copies').value, 10);
 
             try {
@@ -810,7 +874,20 @@
                 if (state.books[id]) {
                     await updateDoc(bookRef, { total: increment(copies), available: increment(copies) });
                 } else {
-                    await setDoc(bookRef, { title, author, total: copies, available: copies });
+                    await setDoc(bookRef, {
+                        id,
+                        accession,
+                        title,
+                        author,
+                        year,
+                        edition,
+                        volume,
+                        location,
+                        subject,
+                        ddc,
+                        total: copies,
+                        available: copies
+                    });
                 }
                 closeModal('book-modal');
                 e.target.reset();
