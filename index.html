@@ -3,63 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LWCS Library - Management System</title>
+    <title>LWCS Library - Login</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-center items-center p-4">
 
-    <!-- Header Navigation -->
-    <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-book-open-reader text-3xl"></i>
-                <div>
-                    <h1 class="text-2xl font-bold tracking-tight">LWCS Library</h1>
-                    <p id="role-badge" class="text-xs text-indigo-200">Public Catalog View (Guest)</p>
+    <!-- LOGIN GATEWAY CONTAINER (Shown when logged out) -->
+    <div id="login-gateway" class="max-w-md w-full bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+        <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-indigo-500/30">
+            <i class="fa-solid fa-book-open-reader"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">LWCS Library Hub</h1>
+            <p class="text-sm text-slate-400 mt-2">Please sign in with your Google account to access the library portal.</p>
+        </div>
+
+        <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-800 font-medium py-3 px-4 rounded-xl shadow-md flex items-center justify-center space-x-3 transition transform active:scale-[0.98]">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-5 h-5">
+            <span>Sign in with Google Account</span>
+        </button>
+        <p class="text-xs text-slate-500">Access levels are automatically determined by your account role.</p>
+    </div>
+
+    <!-- MAIN APP CONTAINER (Hidden until logged in) -->
+    <div id="app-container" class="hidden w-full max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header Navigation -->
+        <header class="bg-indigo-600 text-white shadow-md rounded-2xl">
+            <div class="px-6 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-book-open-reader text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">LWCS Library</h1>
+                        <p id="role-badge" class="text-xs text-indigo-200">Role: Loading...</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Navigation Tabs -->
-            <nav class="flex space-x-2">
-                <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-700 transition">Catalog</button>
-                <button onclick="switchTab('members')" id="nav-members" class="auth-required hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Members</button>
-                <button onclick="switchTab('transactions')" id="nav-transactions" class="auth-required hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrow & Return</button>
-            </nav>
+                <!-- Navigation Tabs -->
+                <nav class="flex space-x-2">
+                    <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-700 transition">Catalog</button>
+                    <button onclick="switchTab('members')" id="nav-members" class="px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Members</button>
+                    <button onclick="switchTab('transactions')" id="nav-transactions" class="px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrow & Return</button>
+                </nav>
 
-            <!-- Auth Area (Firebase Google Sign-In) -->
-            <div id="auth-container" class="flex items-center space-x-3">
-                <!-- Logged Out View -->
-                <div id="login-controls">
-                    <button onclick="loginWithGoogle()" class="bg-white text-slate-700 hover:bg-slate-100 font-medium text-sm px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 transition">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-4 h-4">
-                        <span>Sign in with Google</span>
-                    </button>
-                </div>
-
-                <!-- Logged In User/Admin View -->
-                <div id="admin-profile" class="hidden flex items-center space-x-3 bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500">
-                    <img id="admin-avatar" src="" alt="User" class="w-7 h-7 rounded-full border border-white">
+                <!-- Logged In User Profile -->
+                <div class="flex items-center space-x-3 bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500">
+                    <img id="user-avatar" src="" alt="User" class="w-7 h-7 rounded-full border border-white">
                     <div class="text-left">
-                        <p id="admin-name" class="text-xs font-semibold leading-tight">User</p>
-                        <p id="admin-email" class="text-[10px] text-indigo-200 leading-tight"></p>
+                        <p id="user-name" class="text-xs font-semibold leading-tight">User</p>
+                        <p id="user-email" class="text-[10px] text-indigo-200 leading-tight"></p>
                     </div>
                     <button onclick="logoutUser()" class="ml-2 text-xs bg-rose-500 hover:bg-rose-600 px-2.5 py-1 rounded text-white font-medium transition">
                         Logout
                     </button>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-
-        <!-- STATS DASHBOARD CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+        <!-- DASHBOARD STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Total Books</p>
                     <h3 id="stat-books" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
@@ -68,7 +74,7 @@
                     <i class="fa-solid fa-book"></i>
                 </div>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Total Members</p>
                     <h3 id="stat-members" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
@@ -77,7 +83,7 @@
                     <i class="fa-solid fa-users"></i>
                 </div>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Active Loans</p>
                     <h3 id="stat-loans" class="text-3xl font-bold text-slate-900 mt-1">0</h3>
@@ -90,7 +96,7 @@
 
         <!-- TAB 1: CATALOG SECTION -->
         <section id="tab-catalog" class="space-y-6">
-            <div class="flex flex-col md:flex-row justify-between gap-4 items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex flex-col md:flex-row justify-between gap-4 items-center bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="relative w-full md:w-96">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-search"></i>
@@ -102,7 +108,7 @@
                 </button>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -114,26 +120,22 @@
                                 <th id="book-actions-th" class="admin-only hidden p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="book-table-body" class="divide-y divide-slate-200 text-sm">
-                            <tr>
-                                <td colspan="5" class="p-8 text-center text-slate-400">Connecting to LWCS Library database...</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="book-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: MEMBERS SECTION (AUTH REQUIRED) -->
+        <!-- TAB 2: MEMBERS SECTION -->
         <section id="tab-members" class="space-y-6 hidden">
-            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center bg-white text-slate-800 p-4 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800">Library Members</h2>
                 <button onclick="openModal('member-modal')" id="register-member-btn" class="admin-only hidden bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm">
                     <i class="fa-solid fa-user-plus mr-2"></i>Register Member
                 </button>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -150,11 +152,11 @@
             </div>
         </section>
 
-        <!-- TAB 3: TRANSACTIONS SECTION (AUTH REQUIRED) -->
+        <!-- TAB 3: TRANSACTIONS SECTION -->
         <section id="tab-transactions" class="space-y-6 hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Borrow Form (Admin Only) -->
-                <div id="borrow-form-container" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <!-- Borrow Form -->
+                <div id="borrow-form-container" class="admin-only hidden bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Borrow a Book</h3>
                     <form onsubmit="handleBorrow(event)" class="space-y-4">
                         <div>
@@ -170,7 +172,7 @@
                 </div>
 
                 <!-- Active Loans Table -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1" id="loans-card">
+                <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1" id="loans-card">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-rotate-left mr-2 text-emerald-600"></i>Active Loans & Returns</h3>
                     <div class="overflow-y-auto max-h-72">
                         <table class="w-full text-left text-sm">
@@ -188,11 +190,11 @@
             </div>
         </section>
 
-    </main>
+    </div>
 
-    <!-- MODAL: ADD BOOK (ADMIN ONLY) -->
+    <!-- MODAL: ADD BOOK -->
     <div id="book-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+        <div class="bg-white text-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Add New Book</h3>
             <form onsubmit="handleAddBook(event)" class="space-y-4">
                 <div>
@@ -219,9 +221,9 @@
         </div>
     </div>
 
-    <!-- MODAL: REGISTER MEMBER (ADMIN ONLY) -->
+    <!-- MODAL: REGISTER MEMBER -->
     <div id="member-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
+        <div class="bg-white text-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl">
             <h3 class="text-lg font-bold text-slate-800 mb-4">Register Member</h3>
             <form onsubmit="handleAddMember(event)" class="space-y-4">
                 <div>
@@ -256,9 +258,9 @@
             measurementId: "G-JWSVYC90KL"
         };
 
-        // Configure your administrator emails here:
+        // Add your admin Gmail addresses here:
         const ADMIN_EMAILS = [
-            "your-admin-email@gmail.com" // Replace with your actual Google email to give yourself Admin role
+            "your-admin-email@gmail.com" // Replace with your actual admin email
         ];
 
         const app = initializeApp(firebaseConfig);
@@ -282,58 +284,52 @@
         window.logoutUser = async function () {
             try {
                 await signOut(auth);
-                switchTab('catalog');
             } catch (error) {
                 console.error("Logout Error:", error);
             }
         };
 
         onAuthStateChanged(auth, (user) => {
+            const loginGateway = document.getElementById('login-gateway');
+            const appContainer = document.getElementById('app-container');
+
             if (user) {
                 currentUser = user;
-                // Check if user's email is in the ADMIN_EMAILS list, or if the list is empty (makes first logged-in user admin, or customize rule)
                 isAdmin = ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(user.email);
+                
+                loginGateway.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                updateAuthUI();
+                renderAll();
             } else {
                 currentUser = null;
                 isAdmin = false;
+                
+                appContainer.classList.add('hidden');
+                loginGateway.classList.remove('hidden');
             }
-            updateAuthUI();
-            renderAll();
         });
 
         function updateAuthUI() {
-            const isLogged = Boolean(currentUser);
-            const loginControls = document.getElementById('login-controls');
-            const adminProfile = document.getElementById('admin-profile');
             const roleBadge = document.getElementById('role-badge');
-            const authRequiredElements = document.querySelectorAll('.auth-required');
             const adminOnlyElements = document.querySelectorAll('.admin-only');
+            const borrowFormContainer = document.getElementById('borrow-form-container');
+            const loansCard = document.getElementById('loans-card');
 
-            if (isLogged) {
-                loginControls.classList.add('hidden');
-                adminProfile.classList.remove('hidden');
-                document.getElementById('admin-name').innerText = currentUser.displayName || 'User';
-                document.getElementById('admin-email').innerText = currentUser.email;
-                document.getElementById('admin-avatar').src = currentUser.photoURL || 'https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff';
-                
-                if (isAdmin) {
-                    roleBadge.innerText = 'Role: Administrator (Full Access)';
-                    adminOnlyElements.forEach(el => el.classList.remove('hidden'));
-                    document.getElementById('borrow-form-container').style.display = 'block';
-                    document.getElementById('loans-card').className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1";
-                } else {
-                    roleBadge.innerText = 'Role: Standard User (View & Loans)';
-                    adminOnlyElements.forEach(el => el.classList.add('hidden'));
-                    document.getElementById('borrow-form-container').style.display = 'none';
-                    document.getElementById('loans-card').className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-2 col-span-2";
-                }
-                authRequiredElements.forEach(el => el.classList.remove('hidden'));
+            document.getElementById('user-name').innerText = currentUser.displayName || 'User';
+            document.getElementById('user-email').innerText = currentUser.email;
+            document.getElementById('user-avatar').src = currentUser.photoURL || 'https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff';
+
+            if (isAdmin) {
+                roleBadge.innerText = 'Role: Administrator (Full Access)';
+                adminOnlyElements.forEach(el => el.classList.remove('hidden'));
+                borrowFormContainer.style.display = 'block';
+                loansCard.className = "bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-1 col-span-1";
             } else {
-                loginControls.classList.remove('hidden');
-                adminProfile.classList.add('hidden');
-                roleBadge.innerText = 'Role: Public Guest (Read-Only)';
-                authRequiredElements.forEach(el => el.classList.add('hidden'));
+                roleBadge.innerText = 'Role: Standard User (View & Loans)';
                 adminOnlyElements.forEach(el => el.classList.add('hidden'));
+                borrowFormContainer.style.display = 'none';
+                loansCard.className = "bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 md:col-span-2 col-span-2";
             }
         }
 
@@ -357,10 +353,6 @@
         });
 
         window.switchTab = function (tabName) {
-            if ((tabName === 'members' || tabName === 'transactions') && !currentUser) {
-                alert('Please sign in with Google to access this section.');
-                return;
-            }
             ['catalog', 'members', 'transactions'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).classList.remove('bg-indigo-700');
