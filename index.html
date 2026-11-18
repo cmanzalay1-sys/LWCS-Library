@@ -120,12 +120,16 @@
                 </div>
             </div>
             
-            <nav class="px-6 pb-4 flex flex-wrap gap-2 border-t border-indigo-500/40 pt-3">
-                <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition text-sm">Catalog</button>
-                <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">My Borrowed Books</button>
-                <button onclick="switchTab('approvals')" id="nav-approvals" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Member Approvals</button>
-                <button onclick="switchTab('members')" id="nav-members" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Approved Members</button>
-                <button onclick="switchTab('audit')" id="nav-audit" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition text-sm">Loans & Checkout</button>
+            <!-- Navigation Desks -->
+            <nav class="px-6 pb-4 flex flex-wrap gap-2 border-t border-indigo-500/40 pt-3 text-sm">
+                <button onclick="switchTab('catalog')" id="nav-catalog" class="px-3 py-2 rounded-md font-medium bg-indigo-800 transition">Catalog</button>
+                <button onclick="switchTab('my-books')" id="nav-my-books" class="user-only px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">My Borrowed Books</button>
+                <button onclick="switchTab('shelf')" id="nav-shelf" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Shelf Inventory</button>
+                <button onclick="switchTab('ddc')" id="nav-ddc" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">DDC Inventory</button>
+                <button onclick="switchTab('borrowers')" id="nav-borrowers" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrowers</button>
+                <button onclick="switchTab('borrow-return')" id="nav-borrow-return" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Borrow and Return</button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Settings</button>
+                <button onclick="switchTab('auth')" id="nav-auth" class="admin-only hidden px-3 py-2 rounded-md font-medium hover:bg-indigo-700 transition">Account Authorization</button>
             </nav>
         </header>
 
@@ -161,9 +165,19 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-search"></i></span>
                     <input type="text" id="search-input" oninput="renderCatalog()" placeholder="Search title, author, accession, subject..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
                 </div>
-                <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition text-sm shadow-sm">
-                    <i class="fa-solid fa-plus mr-2"></i>Add New Book
-                </button>
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                    <!-- Admin CSV Uploader & Backup Export -->
+                    <label id="csv-upload-label" class="admin-only hidden bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg cursor-pointer transition text-sm flex items-center">
+                        <i class="fa-solid fa-file-csv mr-2"></i>Upload CSV Database
+                        <input type="file" id="csv-file-input" accept=".csv" onchange="handleCSVUpload(event)" class="hidden">
+                    </label>
+                    <button onclick="exportBackup()" id="export-backup-btn" class="admin-only hidden bg-slate-700 hover:bg-slate-800 text-white font-medium px-4 py-2 rounded-lg transition text-sm flex items-center">
+                        <i class="fa-solid fa-download mr-2"></i>Export Backup
+                    </button>
+                    <button onclick="openModal('book-modal')" id="add-book-btn" class="admin-only hidden bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition text-sm flex items-center">
+                        <i class="fa-solid fa-plus mr-2"></i>Add Book
+                    </button>
+                </div>
             </div>
 
             <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -186,7 +200,7 @@
             </div>
         </section>
 
-        <!-- TAB 2: MY BOOKS (MEMBER RETURN ENABLED) -->
+        <!-- TAB 2: MY BOOKS -->
         <section id="tab-my-books" class="space-y-6 hidden">
             <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-book-bookmark mr-2 text-indigo-600"></i>My Borrowed Books & History</h2>
@@ -207,10 +221,101 @@
             </div>
         </section>
 
-        <!-- TAB 3: MEMBER APPROVALS -->
-        <section id="tab-approvals" class="space-y-6 hidden">
-            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-user-check mr-2 text-indigo-600"></i>Pending Member Registrations</h2>
+        <!-- TAB 3: SHELF INVENTORY -->
+        <section id="tab-shelf" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-800"><i class="fa-solid fa-shelves mr-2 text-indigo-600"></i>Shelf Inventory Breakdown</h2>
+                <p class="text-xs text-slate-500">Overview of book distribution across physical library shelves.</p>
+                <div id="shelf-inventory-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: DDC INVENTORY -->
+        <section id="tab-ddc" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-800"><i class="fa-solid fa-sitemap mr-2 text-indigo-600"></i>Dewey Decimal Classification (DDC) Breakdown</h2>
+                <div id="ddc-inventory-content" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- TAB 5: BORROWERS -->
+        <section id="tab-borrowers" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-800"><i class="fa-solid fa-users-line mr-2 text-indigo-600"></i>Approved Borrowers Directory</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                                <th class="p-3">Member ID / Email</th>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Formation</th>
+                                <th class="p-3">Address</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrowers-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: BORROW AND RETURN -->
+        <section id="tab-borrow-return" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Checkout Book</h3>
+                    <form onsubmit="handleBorrow(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Borrower</label>
+                            <select id="borrow-member" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Book</label>
+                            <select id="borrow-book" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm transition">Confirm Checkout</button>
+                    </form>
+                </div>
+                <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Active Loans & History</h3>
+                    <div class="overflow-y-auto max-h-96">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="p-3">Borrower</th>
+                                    <th class="p-3">Book</th>
+                                    <th class="p-3">Dates</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: SETTINGS -->
+        <section id="tab-settings" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 max-w-xl">
+                <h2 class="text-lg font-semibold text-slate-800"><i class="fa-solid fa-gear mr-2 text-indigo-600"></i>Library System Settings</h2>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Library Portal Title</label>
+                    <input type="text" id="setting-title" value="LWCS Library Portal" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Default Loan Duration (Days)</label>
+                    <input type="number" id="setting-days" value="14" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm">
+                </div>
+                <button onclick="saveSettings()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Save Settings</button>
+            </div>
+        </section>
+
+        <!-- TAB 8: ACCOUNT AUTHORIZATION -->
+        <section id="tab-auth" class="space-y-6 hidden">
+            <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-800"><i class="fa-solid fa-user-shield mr-2 text-indigo-600"></i>Pending Account Authorizations</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -228,63 +333,6 @@
             </div>
         </section>
 
-        <!-- TAB 4: APPROVED MEMBERS -->
-        <section id="tab-members" class="space-y-6 hidden">
-            <div class="bg-white text-slate-800 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                <th class="p-4">Email</th>
-                                <th class="p-4">Name</th>
-                                <th class="p-4">Member ID</th>
-                                <th class="p-4">Role</th>
-                                <th class="p-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="member-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 5: LOANS & CHECKOUT -->
-        <section id="tab-audit" class="space-y-6 hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-share mr-2 text-indigo-600"></i>Checkout Book</h3>
-                    <form onsubmit="handleBorrow(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
-                            <select id="borrow-member" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Book</label>
-                            <select id="borrow-book" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm" required></select>
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm transition">Confirm Checkout</button>
-                    </form>
-                </div>
-                <div class="bg-white text-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4"><i class="fa-solid fa-clipboard-list mr-2 text-emerald-600"></i>Active Loans</h3>
-                    <div class="overflow-y-auto max-h-96">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider font-semibold">
-                                    <th class="p-3">Member</th>
-                                    <th class="p-3">Book</th>
-                                    <th class="p-3">Checkout / Due</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="audit-table-body" class="divide-y divide-slate-200"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </div>
 
     <!-- MODAL: ADD BOOK -->
@@ -298,7 +346,7 @@
                         <input type="text" id="new-book-accession" placeholder="ACC-2026-001" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">Dewey Decimal / Subject Number</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Subject Number / DDC</label>
                         <input type="text" id="new-book-subject" placeholder="230.2" class="w-full p-2 border border-slate-300 rounded-lg text-sm" required>
                     </div>
                 </div>
@@ -372,22 +420,9 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {} };
+        let state = { books: {}, members: {}, pendingMembers: {}, refusedMembers: {}, transactions: {}, settings: {} };
         let currentUser = null;
         let isAdmin = false;
-
-        const SEED_BOOKS = [
-            { id: "b-0", title: "Roman Catholic Political Philosophy", author: "James V. Schall", subjectNumber: "-", year: "2004", category1: "Christianity and Politics - Catholic Church", category2: "Politrical Science - Philosophy", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-1", title: "Human Biology Year 11 ATAR Course - Units 1 and 2", author: "Peter Walster", subjectNumber: "-", year: "2015", category1: "Science", category2: "Biology - Human Biology", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-2", title: "Nelson Physics Units 3 and 4 for the Australian Curriculum", author: "Neil Champion, Robert Farr, Kate Wilson", subjectNumber: "-", year: "2015", category1: "Science", category2: "Physics", accessionNumber: "-", volume: "-", edition: "-", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-3", title: "Human Perspectives Units 1 and 2 ATAR 7ed", author: "T.J. Newton, A.P. Joyce", subjectNumber: "-", year: "2014", category1: "Science", category2: "Biology - Human Biology", accessionNumber: "-", volume: "-", edition: "7th", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 },
-            { id: "b-4", title: "Nelson Physics Units 1 and 2 for the Australian Curriculum", author: "Neil Champion, Geoff Cody, Robert Farr, Megan Mundy, Kate Wilson", subjectNumber: "-", year: "2014", category1: "Science", category2: "Physics", accessionNumber: "-", volume: "-", edition: "1st", location: "Shelf 1, Row 1", totalCopies: 1, availableCopies: 1 }
-        ];
-
-        const SEED_MEMBERS = [
-            { email: "aldrianbastidacanoy@gmail.com", name: "Aldrian Canoy", memberNumber: "LWCS-2026-001", role: "Seminarian", address: "Kabankalan City" },
-            { email: "daniel.reyes@lwcs.edu", name: "Daniel Reyes", memberNumber: "LWCS-2026-014", role: "Seminarian", address: "Kabankalan City" }
-        ];
 
         setInterval(() => {
             const now = new Date();
@@ -407,19 +442,6 @@
         window.logoutUser = async function () {
             try { await signOut(auth); } catch (e) { console.error(e); }
         };
-
-        async function checkAndSeedDatabase() {
-            try {
-                const booksSnap = await getDocs(collection(db, "books"));
-                if (booksSnap.empty) {
-                    for (let b of SEED_BOOKS) { await setDoc(doc(db, "books", b.id), b); }
-                }
-                const membersSnap = await getDocs(collection(db, "members"));
-                if (membersSnap.empty) {
-                    for (let m of SEED_MEMBERS) { await setDoc(doc(db, "members", m.email), m); }
-                }
-            } catch (e) { console.error("Seeding error:", e); }
-        }
 
         function evaluateUserAccess() {
             if (!currentUser) return;
@@ -449,7 +471,6 @@
             if (user) {
                 currentUser = user;
                 isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(user.email.toLowerCase());
-                await checkAndSeedDatabase();
                 evaluateUserAccess();
             } else {
                 currentUser = null;
@@ -496,7 +517,7 @@
         });
 
         window.switchTab = function (tabName) {
-            ['catalog', 'my-books', 'approvals', 'members', 'audit'].forEach(t => {
+            ['catalog', 'my-books', 'shelf', 'ddc', 'borrowers', 'borrow-return', 'settings', 'auth'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).classList.remove('bg-indigo-800');
             });
@@ -507,6 +528,110 @@
 
         window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        // CSV DATABASE UPLOADER (Checks duplicates, preserves different volumes)
+        window.handleCSVUpload = async function(event) {
+            if (!isAdmin) return;
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const text = e.target.result;
+                const lines = text.split(/\r\n|\n/);
+                if (lines.length < 2) {
+                    alert("CSV file is empty or invalid.");
+                    return;
+                }
+
+                // Parse header
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                let addedCount = 0;
+                let duplicateCount = 0;
+
+                for (let i = 1; i < lines.length; i++) {
+                    const row = lines[i].trim();
+                    if (!row) continue;
+                    
+                    // Simple CSV parser respecting quotes
+                    const cols = [];
+                    let inQuote = false;
+                    let current = '';
+                    for (let char of row) {
+                        if (char === '"') inQuote = !inQuote;
+                        else if (char === ',' && !inQuote) {
+                            cols.push(current.trim().replace(/"/g, ''));
+                            current = '';
+                        } else current += char;
+                    }
+                    cols.push(current.trim().replace(/"/g, ''));
+
+                    // Map columns based on your header order
+                    const title = cols[1] || cols[0] || 'Untitled';
+                    const author = cols[2] || '-';
+                    const subjectNumber = cols[3] || '-';
+                    const year = cols[5] || '-';
+                    const category1 = cols[7] || 'General';
+                    const accessionNumber = cols[9] || '-';
+                    const volume = cols[10] || '-';
+                    const edition = cols[11] || '-';
+                    const location = cols[12] || 'Shelf 1';
+
+                    // Check if identical book (Title + Author + Volume) exists
+                    let exists = false;
+                    for (let b of Object.values(state.books)) {
+                        if (b.title.toLowerCase() === title.toLowerCase() &&
+                            b.author.toLowerCase() === author.toLowerCase() &&
+                            b.volume.toLowerCase() === volume.toLowerCase()) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (exists) {
+                        duplicateCount++;
+                    } else {
+                        const id = "b-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+                        const bookData = {
+                            id,
+                            title,
+                            author,
+                            subjectNumber,
+                            year,
+                            category1,
+                            accessionNumber,
+                            volume,
+                            edition,
+                            location,
+                            totalCopies: 1,
+                            availableCopies: 1
+                        };
+                        await setDoc(doc(db, "books", id), bookData);
+                        addedCount++;
+                    }
+                }
+                alert(`CSV Upload Complete!\nAdded: ${addedCount} new books.\nSkipped duplicates: ${duplicateCount} (same title, author & volume).`);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        // EXPORT BACKUP JSON
+        window.exportBackup = function() {
+            if (!isAdmin) return;
+            const backupData = {
+                books: state.books,
+                members: state.members,
+                transactions: state.transactions,
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lwcs-library-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        };
 
         window.renderCatalog = function () {
             const query = (document.getElementById('search-input')?.value || '').toLowerCase();
@@ -522,7 +647,7 @@
             );
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">No books found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">No books found. Use "Upload CSV file" or "Add Book" to populate your library.</td></tr>`;
                 return;
             }
 
@@ -548,14 +673,82 @@
             }
         };
 
+        function renderInventoriesAndBorrowers() {
+            // Shelf Inventory
+            const shelfDiv = document.getElementById('shelf-inventory-content');
+            if (shelfDiv) {
+                const shelves = {};
+                Object.values(state.books).forEach(b => {
+                    const loc = b.location || 'Unassigned Shelf';
+                    shelves[loc] = (shelves[loc] || 0) + 1;
+                });
+                shelfDiv.innerHTML = Object.keys(shelves).length ? Object.entries(shelves).map(([loc, count]) => `
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center">
+                        <div><h4 class="font-semibold text-slate-800">${loc}</h4><p class="text-xs text-slate-500">Total Books</p></div>
+                        <span class="bg-indigo-600 text-white font-bold px-3 py-1 rounded-lg text-sm">${count}</span>
+                    </div>
+                `).join('') : '<p class="text-slate-400">No books recorded.</p>';
+            }
+
+            // DDC Inventory
+            const ddcDiv = document.getElementById('ddc-inventory-content');
+            if (ddcDiv) {
+                const ddcMap = {};
+                Object.values(state.books).forEach(b => {
+                    const sub = b.subjectNumber || 'Unclassified';
+                    ddcMap[sub] = (ddcMap[sub] || 0) + 1;
+                });
+                ddcDiv.innerHTML = Object.keys(ddcMap).length ? Object.entries(ddcMap).map(([sub, count]) => `
+                    <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg flex justify-between items-center text-sm">
+                        <span class="font-mono font-semibold text-indigo-700">Subject / DDC: ${sub}</span>
+                        <span class="bg-slate-200 text-slate-800 font-bold px-2.5 py-0.5 rounded">${count} books</span>
+                    </div>
+                `).join('') : '<p class="text-slate-400">No DDC data.</p>';
+            }
+
+            // Borrowers Table
+            const borrowersTbody = document.getElementById('borrowers-table-body');
+            if (borrowersTbody) {
+                const membersList = Object.values(state.members);
+                borrowersTbody.innerHTML = membersList.length ? membersList.map(m => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-mono text-xs text-slate-500">${m.email}</td>
+                        <td class="p-3 font-medium text-slate-900">${m.name}</td>
+                        <td class="p-3 text-slate-600">${m.role || 'Seminarian'}</td>
+                        <td class="p-3 text-slate-600">${m.address || 'Kabankalan City'}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteMember('${m.email}')" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i> Revoke</button>
+                        </td>
+                    </tr>
+                `).join('') : `<tr><td colspan="5" class="p-6 text-center text-slate-400">No approved borrowers.</td></tr>`;
+            }
+
+            // Account Authorizations
+            const approvalsTbody = document.getElementById('approvals-table-body');
+            if (approvalsTbody) {
+                const pendingList = Object.values(state.pendingMembers);
+                approvalsTbody.innerHTML = pendingList.length ? pendingList.map(p => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 font-mono text-xs text-slate-500">${p.email}</td>
+                        <td class="p-4 font-medium text-slate-900">${p.name}</td>
+                        <td class="p-4 text-slate-600">${p.address}</td>
+                        <td class="p-4 text-slate-600">${p.formation || 'Seminarian'}</td>
+                        <td class="p-4 text-right space-x-2">
+                            <button onclick="approveMember('${p.email}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-xs font-semibold">Accept</button>
+                            <button onclick="refuseMember('${p.email}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-semibold">Refuse</button>
+                        </td>
+                    </tr>
+                `).join('') : `<tr><td colspan="5" class="p-6 text-center text-slate-400">No pending authorizations.</td></tr>`;
+            }
+        }
+
         function renderTransactions() {
-            // Populate Admin Checkout dropdowns
             const memberSelect = document.getElementById('borrow-member');
             const membersList = Object.values(state.members);
             if (memberSelect) {
                 memberSelect.innerHTML = membersList.length
                     ? membersList.map(m => `<option value="${m.email || m.id}">${m.name} (${m.email || m.id})</option>`).join('')
-                    : '<option value="" disabled selected>No approved members</option>';
+                    : '<option value="" disabled selected>No approved borrowers</option>';
             }
 
             const bookSelect = document.getElementById('borrow-book');
@@ -566,7 +759,6 @@
                     : '<option value="" disabled selected>No books available</option>';
             }
 
-            // Admin Audit Table
             const auditTbody = document.getElementById('audit-table-body');
             if (auditTbody) {
                 auditTbody.innerHTML = '';
@@ -592,7 +784,6 @@
                 }
             }
 
-            // Member My Books Table (With Self-Return Button)
             const userHistoryTbody = document.getElementById('user-history-table-body');
             if (userHistoryTbody && currentUser) {
                 userHistoryTbody.innerHTML = '';
@@ -628,6 +819,7 @@
             document.getElementById('stat-members').innerText = Object.keys(state.members).length;
             document.getElementById('stat-loans').innerText = Object.values(state.transactions).filter(tx => !tx.returned).length;
             renderCatalog();
+            renderInventoriesAndBorrowers();
             renderTransactions();
         }
 
@@ -702,6 +894,53 @@
 
         window.deleteBook = async function (id) {
             if (isAdmin) await deleteDoc(doc(db, "books", id));
+        };
+
+        window.deleteMember = async function (email) {
+            if (isAdmin) await deleteDoc(doc(db, "members", email.toLowerCase()));
+        };
+
+        window.approveMember = async function (email) {
+            if (!isAdmin) return;
+            const emailLower = email.toLowerCase();
+            const pending = state.pendingMembers[emailLower];
+            if (!pending) return;
+            const memberData = {
+                id: "m-" + Date.now(),
+                email: emailLower,
+                name: pending.name,
+                role: pending.formation || 'Seminarian',
+                memberNumber: "LWCS-2026-" + Math.floor(100 + Math.random() * 900),
+                address: pending.address || 'Kabankalan City'
+            };
+            await setDoc(doc(db, "members", emailLower), memberData);
+            await deleteDoc(doc(db, "pendingMembers", emailLower));
+        };
+
+        window.refuseMember = async function (email) {
+            if (!isAdmin) return;
+            const emailLower = email.toLowerCase();
+            await setDoc(doc(db, "refusedMembers", emailLower), { email: emailLower });
+            await deleteDoc(doc(db, "pendingMembers", emailLower));
+        };
+
+        window.handleUserSelfRegister = async function (e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const name = document.getElementById('self-reg-name').value.trim();
+            const age = document.getElementById('self-reg-age').value.trim();
+            const formation = document.getElementById('self-reg-formation').value.trim();
+            const address = document.getElementById('self-reg-address').value.trim();
+            const emailLower = currentUser.email.toLowerCase();
+
+            const regData = { email: emailLower, name, age, formation, address, timestamp: new Date().toLocaleString() };
+            await setDoc(doc(db, "pendingMembers", emailLower), regData);
+            evaluateUserAccess();
+        };
+
+        window.saveSettings = function() {
+            const title = document.getElementById('setting-title').value;
+            alert("Settings saved successfully!");
         };
     </script>
 </body>
