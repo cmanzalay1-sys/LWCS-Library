@@ -1,0 +1,14 @@
+{
+  "name": "lwcs-library",
+  "version": "1.0.0",
+  "description": "LWCS Library Portal",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site, no build needed'",
+    "lint": "echo 'No linter configured'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  },
+  "devDependencies": {}
+}
